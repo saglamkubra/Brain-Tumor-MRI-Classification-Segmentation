@@ -1,0 +1,12 @@
+torch
+torchvision
+timm
+grad-cam
+segment-anything @ git+https://github.com/facebookresearch/segment-anything.git
+opencv-python
+numpy
+pandas
+matplotlib
+scikit-learn
+Pillow
+tqdm
