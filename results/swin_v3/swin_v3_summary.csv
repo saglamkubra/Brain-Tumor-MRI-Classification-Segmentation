@@ -1,0 +1,2 @@
+Model,Veri Bölünmesi,Test Görüntüsü,Accuracy (%),Precision (%),Recall (%),F1-score (%)
+Swin-Tiny V3,veri_bolunmesi_v3,1579,93.86,94.48,93.86,93.82
