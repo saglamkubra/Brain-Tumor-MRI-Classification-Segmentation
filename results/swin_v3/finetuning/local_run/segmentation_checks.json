@@ -1,0 +1,115 @@
+{
+  "meningioma": {
+    "intensity_stage_3": {
+      "status": "hazır",
+      "classification": "meningioma",
+      "box": [
+        110,
+        85,
+        191,
+        207
+      ],
+      "score": 0.9452337026596069,
+      "pixels": 7038
+    },
+    "intensity_stage_4": {
+      "status": "hazır",
+      "classification": "meningioma",
+      "box": [
+        110,
+        85,
+        191,
+        207
+      ],
+      "score": 0.9452337026596069,
+      "pixels": 7038
+    }
+  },
+  "glioma": {
+    "intensity_stage_3": {
+      "status": "hazır",
+      "classification": "notumor",
+      "box": [
+        63,
+        34,
+        172,
+        122
+      ],
+      "score": 0.9448708295822144,
+      "pixels": 6274,
+      "warning": "Sınıflandırıcı tümör yok dedi. Görüntü işleme kutusu olası bir parlak bölgedir; tanı değildir."
+    },
+    "intensity_stage_4": {
+      "status": "hazır",
+      "classification": "notumor",
+      "box": [
+        63,
+        34,
+        172,
+        122
+      ],
+      "score": 0.9448708295822144,
+      "pixels": 6274,
+      "warning": "Sınıflandırıcı tümör yok dedi. Görüntü işleme kutusu olası bir parlak bölgedir; tanı değildir."
+    }
+  },
+  "pituitary": {
+    "intensity_stage_3": {
+      "status": "hazır",
+      "classification": "pituitary",
+      "box": [
+        46,
+        115,
+        174,
+        215
+      ],
+      "score": 0.9106740355491638,
+      "pixels": 10713
+    },
+    "intensity_stage_4": {
+      "status": "hazır",
+      "classification": "pituitary",
+      "box": [
+        46,
+        115,
+        174,
+        215
+      ],
+      "score": 0.9106740355491638,
+      "pixels": 10713
+    }
+  },
+  "notumor": {
+    "intensity_stage_3": {
+      "status": "hazır",
+      "classification": "notumor",
+      "box": [
+        51,
+        0,
+        165,
+        41
+      ],
+      "score": 0.9164607524871826,
+      "pixels": 2433,
+      "warning": "Sınıflandırıcı tümör yok dedi. Görüntü işleme kutusu olası bir parlak bölgedir; tanı değildir."
+    },
+    "intensity_stage_4": {
+      "status": "hazır",
+      "classification": "notumor",
+      "box": [
+        51,
+        0,
+        165,
+        41
+      ],
+      "score": 0.9164607524871826,
+      "pixels": 2433,
+      "warning": "Sınıflandırıcı tümör yok dedi. Görüntü işleme kutusu olası bir parlak bölgedir; tanı değildir."
+    }
+  },
+  "manual_meningioma": {
+    "status": "hazır",
+    "pixels": 732
+  },
+  "blank": "kutu_yok"
+}

@@ -1,8 +1,8 @@
 torch
 torchvision
-timm
-grad-cam
-segment-anything @ git+https://github.com/facebookresearch/segment-anything.git
+timm==1.0.22
+grad-cam==1.5.5
+segment-anything==1.0
 opencv-python
 numpy
 pandas
@@ -10,3 +10,7 @@ matplotlib
 scikit-learn
 Pillow
 tqdm
+
+# Yerel NEURO AI LAB web uygulamasi
+fastapi
+uvicorn
