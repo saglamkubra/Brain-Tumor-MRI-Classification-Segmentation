@@ -11,6 +11,12 @@ denemelerinde kullanmayı amaçlar.
 > tedavi amacıyla kullanılamaz. Grad-CAM haritaları ve SAM maskeleri
 > uzman tarafından doğrulanmış tümör sınırları değildir.
 
+## Hızlı başlangıç
+
+- **Yerel demo (Windows):** Python 3.12 ve model checkpoint’leri hazırsa `start.bat` dosyasına çift tıklayın. [Kurulum ve yerel API](#13-neuro-ai-lab-yerel-web-uygulaması)
+- **Colab:** CNN, ViT ve Swin notebook’ları `notebooks/` klasöründe. Swin için aşağıdaki deney tablosundan ilgili notebook’u seçin. [Colab kurulumu](#9-kurulum-ve-çalıştırma)
+- **Sonuçlar:** Eski deneyler orijinal bölmeyi, Swin V3 deneyleri temizlenmiş V3 bölmesini kullanır. [Swin deneyleri](#swin-deneyleri)
+
 ## 1. Projenin amacı
 
 CNN (Convolutional Neural Network), Vision Transformer (ViT-B/16) ve
@@ -111,7 +117,7 @@ validation accuracy: `%94.20`).
 uyarlanmıştır. Kayıtlı deney çıktısında 3 epoch sonunda validation
 accuracy `%97.68` ve kullanılan cihaz CUDA GPU olarak belirtilmiştir.
 
-## 5. Test sonuçları
+## 5. Orijinal veri bölmesi test sonuçları
 
   Metrik                   CNN      ViT   Swin Transformer
   ------------------- -------- -------- ------------------
@@ -223,29 +229,16 @@ değerlendirilmiştir.
 
 ## 8. Proje dosya yapısı
 
-``` text
-Brain-Tumor-MRI-Classification-Segmentation/
-├── notebooks/
-│   ├── CNN.ipynb
-│   ├── Swin_Transformer_SAM.ipynb
-│   └── ViT.ipynb
-├── results/
-│   ├── cnn_training_curves.png
-│   ├── cnn_confusion_matrix.png
-│   ├── vit_training_curves.png
-│   ├── vit_confusion_matrix.png
-│   ├── swin_confusion_matrix.png
-│   ├── ornek_01_swin_sam_sonuc.png
-│   ├── meningioma_manuel_sam_sonuc.png
-│   ├── meningioma_otomatik_manuel_karsilastirma.png
-│   └── uc_tumor_otomatik_sam_karsilastirma.png
-├── requirements.txt
-└── README.md
+```text
+backend/              FastAPI, model yükleme ve segmentasyon
+frontend/             Yerel demo arayüzü
+notebooks/            CNN, ViT, ilk Swin/SAM ve Swin V3 notebook’ları
+experiments/swin_v3/  Fine-tuning, doğrulama ve sonuç dışa aktarımı
+results/              İlk deneylerin grafikleri ve Swin V3 sonuçları
+tests/                Yerel API duman testi
+start.bat             Windows başlatıcısı
+requirements.txt      Python bağımlılıkları
 ```
-
-Bu ağaç hedeflenen düzeni gösterir. Dosyaların depoda gerçekten bulunup
-bulunmadığı ayrıca kontrol edilmelidir. Dosya adları farklıysa README
-içindeki görsel yolları gerçek adlarla eşleştirilmelidir.
 
 ## 9. Kurulum ve çalıştırma
 
@@ -352,6 +345,17 @@ Sunucu açıkken gerçek veri seti arşiviyle duman testi çalıştırılabilir.
 
 Çalıştırılan kontroller ve örnek çıktılar [uygulama test raporunda](WEB_TEST_REPORT.md) yer alır.
 
+## Swin deneyleri
+
+| Deney | Test kümesi | Accuracy | Glioma recall | Kod ve sonuçlar |
+| --- | ---: | ---: | ---: | --- |
+| İlk Swin-Tiny ve SAM deneyi | Orijinal · 1.600 | %93,25 | %80,75 | [İlk notebook](notebooks/Swin_Transformer_SAM.ipynb) · [Test matrisi](results/swin_confusion_matrix.png) |
+| Swin-Tiny V3 başlangıç | V3 · 1.579 | %93,86 | %82,77 | [V3 notebook](notebooks/Swin_Tiny_V3_Notebook_V2.ipynb) · [V3 sonuçları](results/swin_v3/README.md) |
+| V3 fine-tuning, önceki paylaşılan çalışma | V3 · 1.579 | %94,11 | %81,98 | [Karşılaştırma raporu](SWIN_V3_TRAINING_REPORT.md) |
+| V3 fine-tuning, yerel çalışma | V3 · 1.579 | %94,05 | %81,98 | [Eğitim betiği](experiments/swin_v3/train.py) · [Yerel sonuçlar](results/swin_v3/finetuning/local_run/comparison.csv) |
+
+`Swin_Tiny_V3_Notebook_V2.ipynb` adındaki **V3** veri bölmesini, **Notebook_V2** notebook sürümünü belirtir. Web uygulamasında varsayılan Swin profili ilk deneyin `legacy` checkpoint’idir. V3 ile ilk deney farklı test listelerine sahiptir. V3 testinin hasta düzeyinde bağımsızlığı doğrulanmadı.
+
 ## Swin-Tiny V3 fine-tuning ve otomatik SAM
 
 Yerel uygulamanın varsayılan Swin profili `legacy`. V3 ağırlıkları ayrı dosyalarda saklanıyor. Yerel inceleme için PowerShell'de aşağıdaki profil seçeneklerinden birini başlatmadan önce ayarlayabilirsiniz.
@@ -370,7 +374,7 @@ Fine-tuning betiği mevcut V3 checkpoint’inden başlar. Eğitim ve doğrulamay
 .\.venv\Scripts\python.exe -m experiments.swin_v3.export_results results/swin_v3/finetuning/yeni_deney
 ```
 
-Paylaşılan V3 sonucu %93,86 accuracy, %82,77 glioma recall ve 49 glioma → notumor hatasıydı. Paylaşılan fine-tuned çalışma %94,11 accuracy, %81,98 glioma recall ve 39 glioma → notumor hatası verdi. Genel accuracy yükselirken glioma recall düştü. Ayrı yürütülen yerel denemenin ölçümleri ve test kapsamı [Swin V3 raporunda](SWIN_V3_TRAINING_REPORT.md) yer alıyor.
+Metrikler için [Swin deneyleri tablosuna](#swin-deneyleri) ve [yerel eğitim raporuna](SWIN_V3_TRAINING_REPORT.md) bakın.
 
 Canlı Demo, varsayılan olarak gri tonlamalı görüntüdeki parlak ve yerel kontrastı yüksek bir bölgeden kutu üretip SAM’e gönderir. Kullanıcı Grad-CAM kutusu yöntemini ve Stage 3 veya Stage 4 ısı haritasını seçebilir. Manuel kutu seçeneği de kullanılabilir. API’de `POST /segment?mode=auto&method=intensity&stage=4` görüntü işleme kutusu ve Stage 4 haritası döndürür. Parametresiz otomatik API çağrısı Stage 3 Grad-CAM kutusunu kullanır.
 
