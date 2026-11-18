@@ -1,0 +1,80 @@
+{
+  "v3": {
+    "Te-gl_1.jpg": {
+      "model": "Swin-Tiny",
+      "class": "notumor",
+      "probabilities": {
+        "glioma": 0.0004754702385980636,
+        "meningioma": 0.00015819493273738772,
+        "notumor": 0.9984731078147888,
+        "pituitary": 0.0008931636111810803
+      },
+      "device": "cuda"
+    },
+    "confusion_matrix": [
+      [
+        317,
+        15,
+        49,
+        2
+      ],
+      [
+        2,
+        367,
+        22,
+        5
+      ],
+      [
+        0,
+        0,
+        400,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        398
+      ]
+    ]
+  },
+  "v3-finetuned": {
+    "Te-gl_1.jpg": {
+      "model": "Swin-Tiny",
+      "class": "notumor",
+      "probabilities": {
+        "glioma": 0.00017813137674238533,
+        "meningioma": 0.00015215459279716015,
+        "notumor": 0.9984017014503479,
+        "pituitary": 0.0012679242063313723
+      },
+      "device": "cuda"
+    },
+    "confusion_matrix": [
+      [
+        314,
+        24,
+        41,
+        4
+      ],
+      [
+        0,
+        372,
+        17,
+        7
+      ],
+      [
+        0,
+        0,
+        400,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        399
+      ]
+    ]
+  }
+}

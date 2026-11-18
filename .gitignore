@@ -218,3 +218,11 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+# Local model weights, archives and raw MR samples
+/models/
+*.pth
+*.pt
+*.zip
+/frontend/gallery/*-original.jpg

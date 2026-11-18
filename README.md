@@ -319,3 +319,59 @@ Kaggle](https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset
 
 **Bu proje üniversite dersi kapsamında eğitim ve araştırma amacıyla
 hazırlanmıştır.**
+
+
+## 13. NEURO AI LAB yerel web uygulaması
+
+### Windows'ta başlatma
+
+1. Python 3.12'yi PATH'e ekleyin. İlk kurulum için internet bağlantısı gerekir.
+2. Dört checkpoint'i proje kökündeki `models/` klasörüne koyun: `cnn_best.pth`, `vit_best.pth`, `swin_tiny_best.pth` ve `sam_vit_b_01ec64.pth`.
+3. `start.bat` dosyasına çift tıklayın. Başlatıcı eksik paketleri `.venv` içine kurar ve modeller yüklenince varsayılan tarayıcıyı açar. Yerel adres [127.0.0.1:8000](http://127.0.0.1:8000/) şeklindedir. Sunucuyu durdurmak için konsolda Ctrl+C kullanın.
+
+NVIDIA sürücüsü ve CUDA destekli PyTorch varsa modeller GPU'da çalışır. Ağırlıklar CPU belleğinde tutulur, her çıkarım için tek model GPU'ya taşınır ve işlem sonunda CPU'ya alınır. CUDA bellek hatasında ilgili model CPU üzerinde yeniden denenir. Kullanılan cihaz, sonuç kartlarında ve `GET /health` çıktısında gösterilir. Kurulum sırasında başlatıcı, `nvidia-smi` bulunursa PyTorch CUDA 12.4 paketini, aksi halde CPU paketini seçer.
+
+Canlı Demo'da en fazla 10 MiB ve 4096 × 4096 piksel boyutunda PNG/JPG yükleyin. Swin-Tiny `notumor` tahmini yaparsa otomatik SAM atlanır. Otomatik kutu bulunamazsa veya sonuç uygun görünmezse MR üzerinde kutu çizip manuel maske üretin. SAM kalite skoru modelin kendi tahminidir. Maskeler uzman tarafından doğrulanmış tümör sınırları değildir.
+
+### Yerel API ve test
+
+| Yöntem ve adres | İşlev |
+| --- | --- |
+| `GET /health` | Model yükleme durumu, sınıf sırası ve çalışma cihazı |
+| `POST /predict` | Üç modelin sınıf olasılıkları, çalışma cihazı ve önizleme |
+| `POST /segment?mode=auto` | Swin Grad-CAM ve uygun kutu bulunursa SAM maskesi |
+| `POST /segment?mode=manual&box=115,85,160,135` | 224 × 224 önizlemeye göre x1,y1,x2,y2 koordinatlarıyla SAM maskesi |
+
+POST isteklerinde görüntünün ham baytlarını `image/jpeg` veya `image/png` içerik türüyle gönderin. Görüntüler bellekte işlenir. Model ve SAM çıktılarındaki cihaz alanı `cuda` ya da `cpu` değerini alır.
+
+Sunucu açıkken gerçek veri seti arşiviyle duman testi çalıştırılabilir. CPU sunucusu için `--device cpu` kullanın.
+
+```powershell
+.\.venv\Scripts\python.exe tests/smoke_web.py "C:\veri\Brain_Tumor_MRI_Dataset.zip"
+```
+
+Çalıştırılan kontroller ve örnek çıktılar [uygulama test raporunda](WEB_TEST_REPORT.md) yer alır.
+
+## Swin-Tiny V3 fine-tuning ve otomatik SAM
+
+Yerel uygulamanın varsayılan Swin profili `legacy`. V3 ağırlıkları ayrı dosyalarda saklanıyor. Yerel inceleme için PowerShell'de aşağıdaki profil seçeneklerinden birini başlatmadan önce ayarlayabilirsiniz.
+
+```powershell
+$env:NEURO_SWIN_PROFILE = 'v3'
+.\start.bat
+```
+
+`v3` profili `models/swin_tiny_v3_best.pth` dosyasını, `v3-finetuned` profili `models/swin_tiny_v3_finetuned_best.pth` dosyasını açar. Profil veya ağırlık hatası `/health` ve tahmin yanıtlarında görünür. Sınıf sırası glioma, meningioma, notumor, pituitary. V3 ham ağırlık dışa aktarımının sınıf sırası eğitim notebook’undaki sıraya dayanır.
+
+Fine-tuning betiği mevcut V3 checkpoint’inden başlar. Eğitim ve doğrulamayı kendi CSV listelerinden yürütür, en iyi epoch’u doğrulama verisiyle seçer ve test listesini bundan sonra açar. Var olan bir fine-tuned checkpoint’i korumak için tekrar çalıştırırken yeni bir çıktı klasörü seçin.
+
+```powershell
+.\.venv\Scripts\python.exe -m experiments.swin_v3.train --archive "C:\veri\Brain_Tumor_MRI_Dataset.zip" --splits "C:\veri\veri_bolunmesi_v3" --output models/yeni_deney --results results/swin_v3/finetuning/yeni_deney
+.\.venv\Scripts\python.exe -m experiments.swin_v3.export_results results/swin_v3/finetuning/yeni_deney
+```
+
+Paylaşılan V3 sonucu %93,86 accuracy, %82,77 glioma recall ve 49 glioma → notumor hatasıydı. Paylaşılan fine-tuned çalışma %94,11 accuracy, %81,98 glioma recall ve 39 glioma → notumor hatası verdi. Genel accuracy yükselirken glioma recall düştü. Ayrı yürütülen yerel denemenin ölçümleri ve test kapsamı [Swin V3 raporunda](SWIN_V3_TRAINING_REPORT.md) yer alıyor.
+
+Canlı Demo, varsayılan olarak gri tonlamalı görüntüdeki parlak ve yerel kontrastı yüksek bir bölgeden kutu üretip SAM’e gönderir. Kullanıcı Grad-CAM kutusu yöntemini ve Stage 3 veya Stage 4 ısı haritasını seçebilir. Manuel kutu seçeneği de kullanılabilir. API’de `POST /segment?mode=auto&method=intensity&stage=4` görüntü işleme kutusu ve Stage 4 haritası döndürür. Parametresiz otomatik API çağrısı Stage 3 Grad-CAM kutusunu kullanır.
+
+Parlak bölge yöntemi anatomi, kenar veya görüntü artefaktlarını da seçebilir. Sınıflandırıcı ile kutu yöntemi çelişirse arayüz bunu bildirir. SAM skoru, modelin maske kalite tahminidir. Yerel denemelerde referans maskeler eşleştirilmediği için Dice/IoU raporlanmadı. V3 hasta düzeyi bağımsızlığı doğrulanmadı.
