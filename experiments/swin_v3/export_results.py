@@ -27,13 +27,14 @@ def matrix_stats(matrix):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("run", type=Path)
+    parser.add_argument("--run-label", default="yerel çalışma", help="CSV ve grafiklerde kullanılacak çalışma etiketi.")
     args = parser.parse_args()
     out = args.run
     data = json.loads((out/"metrics.json").read_text(encoding="utf-8"))
     epochs = data["epochs"]
     model = np.array(data["test"]["confusion_matrix"])
     matrices = [BASELINE, REPORTED_FINE, model]
-    names = ["V3 · GitHub / paylaşılan", "Fine-tuned · paylaşılan", "Fine-tuned · yerel çalışma"]
+    names = ["V3 · GitHub / paylaşılan", "Fine-tuned · paylaşılan", f"Fine-tuned · {args.run_label}"]
     labels = data["metadata"]["class_names"]
     with (out/"comparison.csv").open("w", newline="", encoding="utf-8-sig") as handle:
         writer = csv.writer(handle)
@@ -60,7 +61,7 @@ def main():
             ax.plot([e["epoch"] for e in epochs],values,marker="o",label=label)
         ax.set(title=title,xlabel="Epoch",xticks=[e["epoch"] for e in epochs])
         ax.legend()
-    fig.suptitle("Swin-Tiny V3 · yerel fine-tuning")
+    fig.suptitle(f"Swin-Tiny V3 · {args.run_label}")
     fig.savefig(out/"training_curves.png",dpi=155)
     plt.close(fig)
     fig, axes = plt.subplots(1,3,figsize=(12,4.4),layout="constrained")
