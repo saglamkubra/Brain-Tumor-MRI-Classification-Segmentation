@@ -17,15 +17,15 @@
 > [!IMPORTANT]
 > Bu proje yalnızca **eğitim ve akademik araştırma** amacıyla geliştirilmiştir. Klinik tanı, tarama veya tedavi aracı değildir. Model skorları kalibre edilmiş tıbbi olasılıklar değildir; Grad-CAM haritaları ve SAM maskeleri uzman tarafından doğrulanmış tümör sınırları değildir.
 
-## 🚀 Hızlı Başlangıç
+## Hızlı başlangıç
 
-- **Yerel Web Uygulaması (Windows):** Uygun Python ortamı ve model ağırlıkları hazırsa `start.bat` dosyasını çalıştırın.
-- **CNN (Convolutional Neural Network):** CNN mimarisi, model eğitimi, sınıflandırma sonuçları ve performans analizleri proje dosyalarında yer almaktadır.
-- **Swin Transformer (Swin-Tiny):** [Google Colab eğitim notebook'u](https://colab.research.google.com/github/saglamkubra/Brain-Tumor-MRI-Classification-Segmentation/blob/main/notebooks/Swin_Tiny_V3_FineTuning_Colab.ipynb) üzerinden eğitim ve deneyler incelenebilir.
-- **Grad-CAM ve SAM:** Açıklanabilir yapay zekâ haritaları, otomatik ve manuel segmentasyon deneyleri proje kapsamında sunulmaktadır.
-- **Veri Seti:** [Brain Tumor MRI Dataset — Kaggle](https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset)
-- **Model Ağırlıkları ve Araştırma Materyalleri:** [Google Drive Proje Klasörü](https://drive.google.com/drive/folders/1aOvUcdAECIrp_yA3w9OtNYRz5jaUeej0?usp=drive_link)
-
+- **Yerel uygulama (Windows):** Uygun Python ortamı ve model checkpoint'leri hazırsa `start.bat` dosyasını çalıştırın. Ayrıntılar için [kurulum](#9-kurulum-ve-çalıştırma) bölümüne bakın.
+- **CNN:** Gri tonlamalı MR sınıflandırması, eğitim ve test sonuçları proje dosyalarında yer almaktadır.
+- **Swin Transformer eğitim/deneyleri:** [Colab notebook'u](https://colab.research.google.com/github/saglamkubra/Brain-Tumor-MRI-Classification-Segmentation/blob/main/notebooks/Swin_Tiny_V3_FineTuning_Colab.ipynb) ve [deney klasörü](experiments/swin_v3/).
+- **Grad-CAM ve SAM:** Model açıklama haritaları ile otomatik ve manuel segmentasyon deneyleri [görsel analizler](#6-deney-görselleri) bölümünde sunulmuştur.
+- **Veri seti:** [Brain Tumor MRI Dataset — Kaggle](https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset).
+- **Model ağırlıkları ve araştırma materyalleri:** [Google Drive klasörü](https://drive.google.com/drive/folders/1aOvUcdAECIrp_yA3w9OtNYRz5jaUeej0?usp=drive_link).
+- **Not:** Eski README'de bulunan ViT sınıflandırıcısı artık projenin hedeflenen sisteminde yer almamaktadır. SAM'ın içindeki ViT-B segmentasyon bileşeni korunmuştur.
 
 ## 1. Projenin amacı
 
@@ -183,25 +183,25 @@ Aşağıdaki Markdown görsellerinin GitHub üzerinde açılabilmesi için ilgil
 
 ### 6.1 Swin Transformer deney karşılaştırması
 
-![Swin Transformer deney karşılaştırması](results/swin_v3/01_swin_v3_deney_karsilastirmasi.png)
+![Swin Transformer deney karşılaştırması](results/swin_v3/swin_sam_grafikleri/01_swin_v3_deney_karsilastirmasi.png)
 
 *Başlangıç, yerel RTX 3050 ve Colab T4 deneylerinin accuracy, glioma recall ve glioma → notumor hata sayıları.*
 
 ### 6.2 Glioma hatalarının analizi
 
-![Glioma sınıflandırma hataları](results/swin_v3/02_glioma_hatalari.png)
+![Glioma sınıflandırma hataları](results/swin_v3/swin_sam_grafikleri/02_glioma_hatalari.png)
 
 *383 glioma örneğindeki doğru ve yanlış sınıflandırmaların dağılımı.*
 
 ### 6.3 Dört sınıfta Grad-CAM ve SAM
 
-![Dört sınıfta Grad-CAM ve SAM](results/swin_v3/10_sam_ve_gradcam_dort_sinif.png)
+![Dört sınıfta Grad-CAM ve SAM](results/swin_v3/swin_sam_grafikleri/10_sam_ve_gradcam_dort_sinif.png)
 
 *Özgün MR görüntüleri, Stage 3 ve Stage 4 Grad-CAM haritaları ve otomatik SAM maskeleri.*
 
 ### 6.4 Otomatik ve manuel SAM karşılaştırması
 
-![Otomatik ve manuel SAM](results/swin_v3/11_sam_otomatik_manuel_kutu.png)
+![Otomatik ve manuel SAM](results/swin_v3/swin_sam_grafikleri/11_sam_otomatik_manuel_kutu.png)
 
 *Aynı meningioma örneğinde iki farklı kutu yönlendirme yaklaşımı.*
 
@@ -209,14 +209,14 @@ Aşağıdaki Markdown görsellerinin GitHub üzerinde açılabilmesi için ilgil
 
 | Grafik | Bağlantı |
 |---|---|
-| Sınıf bazında precision, recall ve F1 | [03 — Sınıf bazlı metrikler](results/swin_v3/03_sinif_bazinda_precision_recall_f1.png) |
-| Karmaşıklık matrisleri | [04 — Matrisler ve farklar](results/swin_v3/04_karisiklik_matrisi_ve_fark.png) |
-| Epoch bazında accuracy ve glioma recall | [05 — Eğitim süreci](results/swin_v3/05_epoch_accuracy_ve_glioma_recall.png) |
-| ROC ve AUC | [06 — ROC/AUC](results/swin_v3/06_roc_auc.png) |
-| Precision–recall | [07 — PR eğrileri](results/swin_v3/07_precision_recall.png) |
-| Softmax skor dağılımları | [08 — Doğru ve yanlış tahminler](results/swin_v3/08_dogru_yanlis_softmax_dagilimi.png) |
-| Softmax kalibrasyonu | [09 — Güvenilirlik grafiği](results/swin_v3/09_softmax_kalibrasyonu.png) |
-| SAM maske alanı ve kalite skoru | [12 — SAM analizi](results/swin_v3/12_sam_maske_alani_ve_kalite_skoru.png) |
+| Sınıf bazında precision, recall ve F1 | [03 — Sınıf bazlı metrikler](results/swin_v3/swin_sam_grafikleri/03_sinif_bazinda_precision_recall_f1.png) |
+| Karmaşıklık matrisleri | [04 — Matrisler ve farklar](results/swin_v3/swin_sam_grafikleri/04_karisiklik_matrisi_ve_fark.png) |
+| Epoch bazında accuracy ve glioma recall | [05 — Eğitim süreci](results/swin_v3/swin_sam_grafikleri/05_epoch_accuracy_ve_glioma_recall.png) |
+| ROC ve AUC | [06 — ROC/AUC](results/swin_v3/swin_sam_grafikleri/06_roc_auc.png) |
+| Precision–recall | [07 — PR eğrileri](results/swin_v3/swin_sam_grafikleri/07_precision_recall.png) |
+| Softmax skor dağılımları | [08 — Doğru ve yanlış tahminler](results/swin_v3/swin_sam_grafikleri/08_dogru_yanlis_softmax_dagilimi.png) |
+| Softmax kalibrasyonu | [09 — Güvenilirlik grafiği](results/swin_v3/swin_sam_grafikleri/09_softmax_kalibrasyonu.png) |
+| SAM maske alanı ve kalite skoru | [12 — SAM analizi](results/swin_v3/swin_sam_grafikleri/12_sam_maske_alani_ve_kalite_skoru.png) |
 
 **Grafiklerin kaynakları:** 01–02 numaralı görseller Colab T4 özet metriklerini de içerir. 03, 04 ve 06–09 numaralı görseller başlangıç ve yerel RTX 3050 checkpoint'lerinin gerçek çıkarımlarına; 05 numara yerel eğitim kaydına; 10–12 numaralar dört örnek üzerinde Swin Transformer ve SAM çıktısına dayanır. Referans maskeler bulunmadığından Dice/IoU raporlanmamıştır.
 
