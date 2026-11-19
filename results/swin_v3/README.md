@@ -18,3 +18,4 @@ Aynı adlı eğitim grafikleri farklı deneylere aittir. Önceki paylaşılan fi
 - [Swin ve SAM grafikleri](swin_sam_grafikleri/README.md)
 - [Colab T4 veri artırma, sınıf dağılımı ve mimari çıktıları](colab_t4_ek_analiz/)
 - [Yerel ince ayar test tahminleri](finetuning/local_run/v3-finetuned_test_predictions.csv)
+`n- [İlk test ve V3 sonuçlarının karşılaştırması](ilk_ve_v3/README.md)
