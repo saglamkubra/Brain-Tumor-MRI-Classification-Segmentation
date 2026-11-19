@@ -1,390 +1,386 @@
-# Beyin MR Görüntülerinde Tümör Sınıflandırma ve Segmentasyon
+<div align="center">
+
+# 🧠 Beyin Tümörü Analiz Sistemi
+
+### CNN ve Swin Transformer ile Beyin MR Sınıflandırması · Grad-CAM ve SAM ile Görselleştirme
 
 **Brain Tumor MRI Classification and Segmentation**
 
-Bu proje, beyin MRI görüntülerini dört sınıfta sınıflandırmayı;
-sınıflandırma kararlarını Grad-CAM ile görselleştirmeyi ve yaklaşık
-konum bilgilerini Segment Anything Model (SAM) ile segmentasyon
-denemelerinde kullanmayı amaçlar.
+![Python](https://img.shields.io/badge/Python-PyTorch-3776AB?style=flat-square)
+![Backend](https://img.shields.io/badge/Backend-FastAPI-009688?style=flat-square)
+![Research](https://img.shields.io/badge/Kullanım-Akademik%20Araştırma-6D5DFB?style=flat-square)
 
-> **Uyarı:** Çalışma eğitim ve araştırma amaçlıdır. Klinik tanı veya
-> tedavi amacıyla kullanılamaz. Grad-CAM haritaları ve SAM maskeleri
-> uzman tarafından doğrulanmış tümör sınırları değildir.
+[Proje](#1-projenin-amacı) · [Modeller](#4-kullanılan-modeller) · [Sonuçlar](#5-model-performansları) · [Grafikler](#6-deney-görselleri) · [Kurulum](#9-kurulum-ve-çalıştırma) · [Google Drive](#11-google-drive-ve-model-dosyaları)
+
+</div>
+
+> [!IMPORTANT]
+> Bu proje yalnızca **eğitim ve akademik araştırma** amacıyla geliştirilmiştir. Klinik tanı, tarama veya tedavi aracı değildir. Model skorları kalibre edilmiş tıbbi olasılıklar değildir; Grad-CAM haritaları ve SAM maskeleri uzman tarafından doğrulanmış tümör sınırları değildir.
 
 ## Hızlı başlangıç
 
-- **Yerel demo (Windows):** Python 3.12 ve model checkpoint’leri hazırsa `start.bat` dosyasına çift tıklayın. [Kurulum ve yerel API](#13-neuro-ai-lab-yerel-web-uygulaması)
-- **Swin V3 fine-tuning (Colab):** Notebook’u açın, GPU çalışma zamanı seçin ve **Tümünü çalıştır**’a basın. Drive iznini verince eğitim betikleri sırayla çalışır. [Colab’da aç](https://colab.research.google.com/github/saglamkubra/Brain-Tumor-MRI-Classification-Segmentation/blob/main/notebooks/Swin_Tiny_V3_FineTuning_Colab.ipynb)
-- **Sonuçlar:** Eski deneyler orijinal bölmeyi, Swin V3 deneyleri temizlenmiş V3 bölmesini kullanır. [Swin deneyleri](#swin-deneyleri)
+- **Yerel uygulama (Windows):** Uygun Python ortamı ve model checkpoint'leri hazırsa `start.bat` dosyasını çalıştırın. Ayrıntılar için [kurulum](#9-kurulum-ve-çalıştırma) bölümüne bakın.
+- **Swin Transformer eğitim/deneyleri:** [Colab notebook'u](https://colab.research.google.com/github/saglamkubra/Brain-Tumor-MRI-Classification-Segmentation/blob/main/notebooks/Swin_Tiny_V3_FineTuning_Colab.ipynb) ve [deney klasörü](experiments/swin_v3/).
+- **Model ağırlıkları ve araştırma materyalleri:** [Google Drive klasörü](https://drive.google.com/drive/folders/1aOvUcdAECIrp_yA3w9OtNYRz5jaUeej0?usp=drive_link).
+- **Not:** Eski README'de bulunan ViT sınıflandırıcısı artık projenin hedeflenen sisteminde yer almamaktadır. SAM'ın içindeki ViT-B segmentasyon bileşeni korunmuştur.
 
 ## 1. Projenin amacı
 
-CNN (Convolutional Neural Network), Vision Transformer (ViT-B/16) ve
-Swin Transformer modelleriyle dört sınıflı MRI sınıflandırması
-yapılmıştır. Swin Transformer çıktıları üzerinden Grad-CAM
-açıklanabilirlik haritaları üretilmiş; otomatik ve manuel konum kutuları
-SAM ViT-B modeline verilerek segmentasyon sonuçları görsel olarak
-incelenmiştir.
+**Beyin Tümörü Analiz Sistemi**, beyin MR görüntülerini dört sınıfa ayıran iki farklı derin öğrenme yaklaşımını inceleyen ve sonuçları açıklanabilir yapay zekâ ile görselleştiren bir üniversite projesidir.
 
-Sınıflar: `glioma`, `meningioma`, `notumor`, `pituitary`.
+Proje bileşenleri:
+
+1. **CNN (Convolutional Neural Network)** ile görüntü sınıflandırması.
+2. **Swin Transformer (Swin-Tiny)** ile görüntü sınıflandırması.
+3. **Grad-CAM** ile model kararında etkili bölgelerin yaklaşık görselleştirilmesi.
+4. **Segment Anything Model (SAM ViT-B)** ile otomatik veya manuel kutu üzerinden aday bölge maskelenmesi.
+5. **FastAPI** tabanlı yerel uygulamada modellerin ve analiz sonuçlarının sunulması.
+
+### Sınıflar
+
+| Sınıf | Model etiketi |
+|---|---|
+| Glioma | `glioma` |
+| Meningioma | `meningioma` |
+| Tümör yok | `notumor` |
+| Hipofiz tümörü | `pituitary` |
 
 ## 2. Veri seti
 
-[Brain Tumor MRI Dataset --
-Kaggle](https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset)
+Veri kaynağı: [Brain Tumor MRI Dataset — Kaggle](https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset).
 
-  Bölüm          Görüntü sayısı   Sınıf başına
-  ------------ ---------------- --------------
-  Train                   4.480          1.120
-  Validation              1.120            280
-  Test                    1.600            400
-  **Toplam**          **7.200**      **1.800**
+### Swin Transformer için kullanılan veri bölünmesi
 
-CNN ve ViT deneyleri `train.csv`, `val.csv` ve `test.csv` dosyalarıyla
-aynı veri bölünmesi üzerinde değerlendirilmiştir. Ham veri seti büyük
-boyutu nedeniyle GitHub deposuna eklenmemiştir.
+| Bölüm | Görüntü sayısı |
+|---|---:|
+| Eğitim | 3.870 |
+| Doğrulama | 994 |
+| Test | 1.579 |
+| **Toplam** | **6.443** |
+
+`train.csv`, `val.csv` ve `test.csv` dosyaları görüntülerin göreli yollarını (`dosya`) ve sınıf etiketlerini (`sinif`) içerir. **Görüntüler CSV dosyalarının içinde bulunmaz**; veri setinin `Training/` ve `Testing/` klasörlerinde saklanır.
+
+Önceki deneylerde farklı bir veri bölünmesi de kullanılmıştır (4.480 eğitim, 1.120 doğrulama, 1.600 test). Farklı test listeleriyle elde edilen metrikler doğrudan aynı koşullarda yapılmış model karşılaştırması olarak yorumlanmamalıdır. Hasta düzeyinde bağımsızlık doğrulanmamıştır.
 
 ## 3. Görüntü ön işleme
 
-### CNN
+| Özellik | CNN | Swin Transformer |
+|---|---|---|
+| Giriş biçimi | Gri tonlamalı | RGB |
+| Görüntü boyutu | 224 × 224 | 224 × 224 |
+| Normalizasyon | Eğitimde kullanılan 0.5 ortalama / 0.5 std | ImageNet mean / std |
+| Sınıf sayısı | 4 | 4 |
 
--   Gri tonlamalı görüntüler, `224 × 224` piksele yeniden
-    boyutlandırılmıştır.
--   Tensöre dönüştürme ve ortalama/standart sapması `0.5` olan
-    normalizasyon uygulanmıştır.
+Swin Transformer için ImageNet normalizasyonu:
 
-### ViT
+```python
+mean = [0.485, 0.456, 0.406]
+std  = [0.229, 0.224, 0.225]
+```
 
--   Görüntüler RGB ve `224 × 224` boyutundadır.
--   Eğitimde `%50` olasılıkla yatay çevirme ve `±10°` rastgele döndürme
-    uygulanmıştır.
--   ImageNet ortalaması `(0.485, 0.456, 0.406)` ve standart sapması
-    `(0.229, 0.224, 0.225)` ile normalize edilmiştir.
--   Validation ve testte rastgele artırma kullanılmamıştır.
+CNN ve Swin modellerine **kendi eğitimlerinde kullanılan dönüşümler ayrı ayrı uygulanmalıdır**.
 
-### Swin Transformer
+## 4. Kullanılan modeller
 
-Swin veri hazırlama ve dönüşüm adımları ilgili Colab notebook'unda
-uygulanmıştır. Bu README'de notebook tarafından doğrulanmamış ek
-parametre varsayılmamıştır.
+### 4.1 CNN — Convolutional Neural Network
 
-## 4. Modeller
+CNN, beyin MR görüntülerinin uzamsal özelliklerini evrişim katmanları aracılığıyla öğrenen sınıflandırma modelidir.
 
-### CNN
+| Özellik | Değer |
+|---|---|
+| Giriş | 224 × 224, grayscale |
+| Evrişim katmanı | 8 |
+| Parametre sayısı | 3.337.764 |
+| En iyi epoch | 33 |
+| Test accuracy | **%89,61** |
+| Macro precision | **%91,06** |
+| Macro recall | **%89,49** |
+| Macro F1-score | **%89,55** |
 
-Üç evrişim bloğu (32, 64, 128 kanal), Batch Normalization, ReLU ve Max
-Pooling kullanılmıştır. Ardından Adaptive Average Pooling, 128 nöronlu
-tam bağlantılı katman, Dropout (0.4) ve dört sınıflı çıkış katmanı yer
-alır.
+CNN dağıtım paketinde `inference.py` üzerinden sınıflandırma ve sınıf skorları üretilir. Araştırma notebook'unda Grad-CAM değerlendirilmiştir; mevcut CNN inference modülü yalnızca sınıflandırma ve sınıf skorlarını sunmaktadır.
 
-  Parametre                Değer
-  ------------------------ ------------------
-  Loss                     CrossEntropyLoss
-  Optimizer                Adam
-  Learning rate            0.001
-  Epoch                    20
-  Batch size               32
-  Dropout                  0.4
-  Eğitilebilir parametre   110.148
+Grad-CAM için belirtilen hedef katman: `features.3.block.3`.
 
-En iyi CNN modeli 18. epoch'ta kaydedilmiştir (validation loss:
-`0.3770`, validation accuracy: `%85.89`).
+Checkpoint, `torch.load(weights_only=True)` ile yüklenebilecek biçimde hazırlanmıştır ve SHA256 checksum kontrolü kullanır. Uyumluluk bilgileri CNN dağıtım paketindeki `deployment_config.json` dosyasındadır.
 
-### Vision Transformer (ViT)
+### 4.2 Swin Transformer (Swin-Tiny)
 
-Torchvision ImageNet ön eğitimli ViT-B/16 kullanılmıştır. Sınıflandırma
-başlığı dört sınıfa uyarlanmış; önceden eğitilmiş gövde dondurularak
-yalnızca yeni sınıflandırma katmanı eğitilmiştir (feature extraction /
-linear probing).
+Swin Transformer, **Shifted Window** dikkat mekanizmasını kullanan bir Transformer mimarisidir. Bu projede **Swin-Tiny** varyantı kullanılmıştır.
 
-  Parametre                Değer
-  ------------------------ ------------------
-  Loss                     CrossEntropyLoss
-  Optimizer                AdamW
-  Learning rate            0.001
-  Weight decay             0.01
-  Epoch                    10
-  Batch size               16
-  Toplam parametre         85.801.732
-  Eğitilebilir parametre   3.076
+```python
+timm.create_model(
+    "swin_tiny_patch4_window7_224",
+    pretrained=False,
+    num_classes=4
+)
+```
 
-En iyi doğrulama sonucu 10. epoch'tadır (validation loss: `0.1715`,
-validation accuracy: `%94.20`).
+Bu kod, kayıtlı ağırlıkları yüklemek için mimariyi oluşturma örneğidir. Modelin eğitim başlangıcında ImageNet ön eğitimli ağırlıklar kullanılmıştır.
 
-### Swin Transformer
+Sınıf sırası: `glioma`, `meningioma`, `notumor`, `pituitary`.
 
-Önceden eğitilmiş Swin Transformer ağırlıkları dört sınıflı göreve
-uyarlanmıştır. Kayıtlı deney çıktısında 3 epoch sonunda validation
-accuracy `%97.68` ve kullanılan cihaz CUDA GPU olarak belirtilmiştir.
+### 4.3 Grad-CAM — Açıklanabilir yapay zekâ
 
-## 5. Orijinal veri bölmesi test sonuçları
+Grad-CAM, sınıflandırma kararında etkili olan bölgeleri yaklaşık bir **ısı haritası** ile görselleştirir. Swin Transformer için **Stage 3** ve **Stage 4** çıktıları incelenmiştir.
 
-  Metrik                   CNN      ViT   Swin Transformer
-  ------------------- -------- -------- ------------------
-  Accuracy              %76.75   %90.25             %93.25
-  Precision (Macro)     %79.85   %91.09             %93.88
-  Recall (Macro)        %76.75   %90.25             %93.25
-  F1-score (Macro)      %75.88   %90.05             %93.19
+Isı haritasının lezyon bölgesine denk gelmesi garanti değildir; kafatası, kenar veya arka plan alanlarına da odaklanabilir. **Grad-CAM bir segmentasyon yöntemi değildir.**
 
-CNN ve ViT aynı 1.600 görüntülük test kümesinde değerlendirilmiştir.
-ViT, CNN'den 13.50 yüzde puan daha yüksek test doğruluğu elde etmiştir.
-Ancak CNN sıfırdan eğitilirken ViT ImageNet ön eğitimli ağırlıklarla
-kullanılmıştır; bu nedenle transfer öğrenme etkisi de dikkate
-alınmalıdır. Swin için raporlanan test doğruluğu `%93.25`'tir. Swin
-validation doğruluğu `%97.68` olup test metriğinden farklı bir veri
-bölümüne aittir.
+### 4.4 Segment Anything Model (SAM ViT-B)
 
-### CNN sınıf bazlı metrikleri
+SAM, görüntü ve konum kutusu girdilerinden segmentasyon maskesi üreten bir modeldir.
 
-  Sınıf          Precision   Recall       F1   Support
-  ------------ ----------- -------- -------- ---------
-  Glioma            0.9735   0.5500   0.7029       400
-  Meningioma        0.6753   0.5875   0.6283       400
-  No Tumor          0.6633   1.0000   0.7976       400
-  Pituitary         0.8818   0.9325   0.9064       400
+- **Otomatik kutu:** Görüntü işleme veya Grad-CAM üzerinden aday bölge belirlenmesi.
+- **Manuel kutu:** Kullanıcının görüntü üzerinde kutu çizmesi.
+- **Maske:** SAM'ın önerdiği bölgenin görselleştirilmesi.
 
-### ViT sınıf bazlı metrikleri
+SAM'ın kalite skoru, gerçek segmentasyon doğruluğu değildir. Uyumlu referans maskeler olmadığı için **Dice ve IoU hesaplanmamıştır**.
 
-  Sınıf          Precision   Recall       F1   Support
-  ------------ ----------- -------- -------- ---------
-  Glioma            0.9831   0.7275   0.8362       400
-  Meningioma        0.7978   0.9175   0.8535       400
-  No Tumor          0.9365   0.9950   0.9648       400
-  Pituitary         0.9260   0.9700   0.9475       400
+## 5. Model performansları
 
-### Swin Transformer karmaşıklık matrisi
+### 5.1 Sınıflandırma sonuçları
 
-Satırlar gerçek, sütunlar tahmin edilen sınıflardır.
+| Metrik | CNN | Swin Transformer (ilk V3 değerlendirmesi) |
+|---|---:|---:|
+| Test accuracy | **%89,61** | **%93,86** |
+| Macro precision | %91,06 | — |
+| Macro recall | %89,49 | — |
+| Macro F1-score | %89,55 | — |
+| Glioma recall | — | %82,77 |
 
-  Gerçek  Tahmin     Glioma   Meningioma   No Tumor   Pituitary
-  ---------------- -------- ------------ ---------- -----------
-  Glioma                323           53         24           0
-  Meningioma              2          393          3           2
-  No Tumor                1            0        399           0
-  Pituitary               4           19          0         377
+> **Karşılaştırma notu:** CNN ve Swin sonuçlarının aynı test örnekleri üzerinde hesaplandığı doğrulanmadığından, tabloda gösterilen değerler doğrudan adil bir mimari üstünlük karşılaştırması değildir. `—` doğrulanmış değer sağlanmadığını belirtir.
+
+### 5.2 Swin Transformer eğitim deneyleri
+
+| Deney | Test görüntüsü | Accuracy | Glioma recall | Glioma → `notumor` |
+|---|---:|---:|---:|---:|
+| İlk Swin/SAM çalışması | 1.600 | %93,25 | %80,75 | 24 |
+| Temel Swin değerlendirmesi | 1.579 | %93,86 | %82,77 | 49 |
+| Ek eğitim sonrası — önceki çalışma | 1.579 | %94,11 | %81,98 | 39 |
+| Ek eğitim sonrası — yerel RTX 3050 | 1.579 | %94,05 | %81,98 | 41 |
+| Ek eğitim sonrası — Colab T4 | 1.579 | %93,98 | %81,72 | 39 |
+
+Ek eğitim bazı deneylerde genel doğruluğu artırmış ve glioma → `notumor` hata sayısını azaltmıştır; ancak glioma recall değeri düşmüştür. Sonuçlar birlikte değerlendirilmelidir.
+
+**Colab T4 notu:** 383 glioma örneğinin 313'ü doğru, 39'u `notumor`, 31'i diğer sınıflar olarak tahmin edilmiştir. Colab T4'ün tam karmaşıklık matrisi ve görüntü bazlı skorları yerel kayıtlarda bulunmadığı için tüm grafikler aynı checkpoint'ten üretilmemiştir.
+
+### 5.3 Swin Transformer temel değerlendirme karmaşıklık matrisi
+
+Satırlar gerçek, sütunlar tahmin edilen sınıftır.
+
+| Gerçek \ Tahmin | Glioma | Meningioma | No Tumor | Pituitary |
+|---|---:|---:|---:|---:|
+| Glioma | 317 | 15 | 49 | 2 |
+| Meningioma | 2 | 367 | 22 | 5 |
+| No Tumor | 0 | 0 | 400 | 0 |
+| Pituitary | 0 | 2 | 0 | 398 |
 
 ## 6. Deney görselleri
 
-Görsellerin GitHub'da `results/` klasöründe bulunması ve dosya adlarının
-aşağıdakilerle aynı olması gerekir.
+Aşağıdaki Markdown görsellerinin GitHub üzerinde açılabilmesi için ilgili PNG dosyalarının depoda belirtilen yollarda bulunması gerekir. Görseller depoda yoksa [Google Drive araştırma klasöründen](https://drive.google.com/drive/folders/1aOvUcdAECIrp_yA3w9OtNYRz5jaUeej0?usp=drive_link) uygun dosyaları depodaki `results/` klasörüne **kişisel/hassas veri içermediklerini kontrol ederek** ekleyin.
 
-### CNN
+### 6.1 Swin Transformer deney karşılaştırması
 
-![CNN eğitim grafikleri](results/cnn_training_curves.png) *CNN eğitim ve
-doğrulama loss/accuracy grafikleri.*
+![Swin Transformer deney karşılaştırması](results/swin_v3/01_swin_v3_deney_karsilastirmasi.png)
 
-![CNN confusion matrix](results/cnn_confusion_matrix.png) *CNN test
-karmaşıklık matrisi.*
+*Başlangıç, yerel RTX 3050 ve Colab T4 deneylerinin accuracy, glioma recall ve glioma → notumor hata sayıları.*
 
-### ViT
+### 6.2 Glioma hatalarının analizi
 
-![ViT eğitim grafikleri](results/vit_training_curves.png) *ViT eğitim ve
-doğrulama loss/accuracy grafikleri.*
+![Glioma sınıflandırma hataları](results/swin_v3/02_glioma_hatalari.png)
 
-![ViT confusion matrix](results/vit_confusion_matrix.png) *ViT test
-karmaşıklık matrisi.*
+*383 glioma örneğindeki doğru ve yanlış sınıflandırmaların dağılımı.*
 
-### Swin Transformer
+### 6.3 Dört sınıfta Grad-CAM ve SAM
 
-![Swin confusion matrix](results/swin_confusion_matrix.png) *Swin
-Transformer test karmaşıklık matrisi.*
+![Dört sınıfta Grad-CAM ve SAM](results/swin_v3/10_sam_ve_gradcam_dort_sinif.png)
 
-![Swin Grad-CAM ve SAM örneği](results/ornek_01_swin_sam_sonuc.png)
-*Örnek MRI görüntüsü ve Grad-CAM/SAM işlem çıktısı.*
+*Özgün MR görüntüleri, Stage 3 ve Stage 4 Grad-CAM haritaları ve otomatik SAM maskeleri.*
 
-## 7. Grad-CAM ve SAM segmentasyon deneyleri
+### 6.4 Otomatik ve manuel SAM karşılaştırması
 
-Grad-CAM, Swin Transformer'ın belirli bir sınıf tahmininde hangi görüntü
-bölgelerine ağırlık verdiğini görselleştirmek için kullanılmıştır.
-Aktivasyon haritası kesin tümör sınırı değildir.
+![Otomatik ve manuel SAM](results/swin_v3/11_sam_otomatik_manuel_kutu.png)
 
-Önceden eğitilmiş SAM ViT-B modeline MRI görüntüsüyle birlikte konum
-kutusu verilmiştir. İki yönlendirme yaklaşımı incelenmiştir:
+*Aynı meningioma örneğinde iki farklı kutu yönlendirme yaklaşımı.*
 
-1.  **Otomatik kutu:** Grad-CAM aktivasyonundan yaklaşık konum kutusu
-    türetilmesi.
-2.  **Manuel kutu:** Görüntü üzerinde elle belirlenen kutunun SAM'a
-    verilmesi.
+### 6.5 Diğer analiz grafikleri
 
-![Meningioma otomatik ve manuel SAM
-karşılaştırması](results/meningioma_otomatik_manuel_karsilastirma.png)
-*Orijinal görüntü, otomatik Grad-CAM + SAM ve manuel kutu + SAM
-karşılaştırması.*
+| Grafik | Bağlantı |
+|---|---|
+| Sınıf bazında precision, recall ve F1 | [03 — Sınıf bazlı metrikler](results/swin_v3/03_sinif_bazinda_precision_recall_f1.png) |
+| Karmaşıklık matrisleri | [04 — Matrisler ve farklar](results/swin_v3/04_karisiklik_matrisi_ve_fark.png) |
+| Epoch bazında accuracy ve glioma recall | [05 — Eğitim süreci](results/swin_v3/05_epoch_accuracy_ve_glioma_recall.png) |
+| ROC ve AUC | [06 — ROC/AUC](results/swin_v3/06_roc_auc.png) |
+| Precision–recall | [07 — PR eğrileri](results/swin_v3/07_precision_recall.png) |
+| Softmax skor dağılımları | [08 — Doğru ve yanlış tahminler](results/swin_v3/08_dogru_yanlis_softmax_dagilimi.png) |
+| Softmax kalibrasyonu | [09 — Güvenilirlik grafiği](results/swin_v3/09_softmax_kalibrasyonu.png) |
+| SAM maske alanı ve kalite skoru | [12 — SAM analizi](results/swin_v3/12_sam_maske_alani_ve_kalite_skoru.png) |
 
-![Meningioma manuel SAM sonucu](results/meningioma_manuel_sam_sonuc.png)
-*Manuel kutu ile yönlendirilen SAM maskesi.*
+**Grafiklerin kaynakları:** 01–02 numaralı görseller Colab T4 özet metriklerini de içerir. 03, 04 ve 06–09 numaralı görseller başlangıç ve yerel RTX 3050 checkpoint'lerinin gerçek çıkarımlarına; 05 numara yerel eğitim kaydına; 10–12 numaralar dört örnek üzerinde Swin Transformer ve SAM çıktısına dayanır. Referans maskeler bulunmadığından Dice/IoU raporlanmamıştır.
 
-![Üç sınıfta otomatik SAM
-karşılaştırması](results/uc_tumor_otomatik_sam_karsilastirma.png)
-*Glioma, meningioma ve pituitary örneklerinde otomatik SAM çıktıları.*
+## 7. Grad-CAM ve SAM deneyleri
 
-İlk deneylerde otomatik kutuların bazı görüntülerde geniş kaldığı ve
-SAM'ın tümör yerine daha geniş anatomik alanları maskeleyebildiği
-görülmüştür. Manuel kutularla bazı örneklerde lezyona görsel olarak daha
-uygun maskeler elde edilmiştir. Veri setinde uzmanlarca hazırlanmış
-referans segmentasyon maskeleri bulunmadığından Dice veya IoU gibi
-referans maske gerektiren nicel segmentasyon metrikleri
-hesaplanamamıştır. Bu nedenle SAM çıktıları görsel/niteliksel olarak
-değerlendirilmiştir.
+Otomatik konumlandırma, Grad-CAM haritasından veya görüntüdeki yerel kontrast/parlaklık özelliklerinden kutu üretebilir. Kutu SAM'a verilerek maske elde edilir.
+
+Bununla birlikte:
+- Grad-CAM bazı görüntülerde tümör yerine ilgisiz bölgelere odaklanabilir.
+- Parlaklık tabanlı yöntem normal anatomiyi veya artefaktları lezyon adayı sanabilir.
+- Sınıflandırma sonucu `notumor` olsa bile görüntü işleme yöntemi aday bölge bulabilir.
+- Manuel kutu bazı örneklerde görsel olarak daha uygun maske üretebilir.
+- Uzman referans maskesi olmadan segmentasyon başarısı sayısal olarak doğrulanamaz.
+
+Bu nedenle otomatik kutu ve SAM çıktıları **araştırma amaçlı görsel öneriler** olarak ele alınmalıdır.
 
 ## 8. Proje dosya yapısı
 
+Aşağıdaki yapı, önceki README'de belgelenen proje düzenini özetler; güncel depoda dosyaların varlığı ayrıca kontrol edilmelidir.
+
 ```text
-backend/              FastAPI, model yükleme ve segmentasyon
-frontend/             Yerel demo arayüzü
-notebooks/            CNN, ViT, ilk Swin/SAM ve Swin V3 notebook’ları
-experiments/swin_v3/  Fine-tuning, doğrulama ve sonuç dışa aktarımı
-results/              İlk deneylerin grafikleri ve Swin V3 sonuçları
-tests/                Yerel API duman testi
-start.bat             Windows başlatıcısı
-requirements.txt      Python bağımlılıkları
+backend/                FastAPI ve model servisleri
+frontend/               Yerel web arayüzü
+notebooks/              Model eğitimleri ve araştırma notebook'ları
+experiments/swin_v3/    Swin ek eğitim ve değerlendirme kodları
+results/                Grafikler ve deney çıktıları
+tests/                  API testleri
+models/                 Yerel checkpoint dosyaları (GitHub'a yüklenmez)
+start.bat               Windows başlatıcısı
+requirements.txt        Python bağımlılıkları
 ```
+
+Eski notebook dosya adlarında sürüm numaraları bulunabilir. Bunlar teknik dosya isimleridir; model mimarilerinin isimleri değildir.
 
 ## 9. Kurulum ve çalıştırma
 
-Başlıca kullanılan kütüphaneler: Python, PyTorch, Torchvision, timm,
-NumPy, Pandas, Matplotlib, Seaborn, Scikit-learn, OpenCV,
-pytorch-grad-cam ve segment-anything.
+### 9.1 Depoyu klonlayın
 
-1.  Depoyu klonlayın:
-
-    ``` bash
-    git clone https://github.com/saglamkubra/Brain-Tumor-MRI-Classification-Segmentation.git
-    ```
-
-2.  Veri setini Kaggle bağlantısından indirip Google Drive'a yükleyin.
-
-3.  İlgili notebook'u Google Colab'da açın.
-
-4.  Colab çalışma zamanında uygun GPU'yu seçin.
-
-5.  Notebook içindeki Drive ve veri seti yollarını kendi ortamınıza göre
-    düzenleyin.
-
-6.  Gerekli kütüphaneleri kurup hücreleri sırasıyla çalıştırın.
-
-Veri seti ve eğitilmiş ağırlık dosyaları büyük oldukları için GitHub
-deposunda tutulmayabilir. Notebook'ların çalışması için veri ve model
-ağırlığı yolları ayrıca ayarlanmalıdır.
-
-## 10. Sınırlılıklar
-
--   Sonuçlar kullanılan veri seti ve deney düzeniyle sınırlıdır; farklı
-    merkez ve cihazlarda genellenebilirlik ayrıca doğrulanmamıştır.
--   CNN ve ViT'nin ön işleme ve eğitim stratejileri farklıdır. ViT'de
-    ImageNet ön eğitimi kullanılmıştır.
--   Grad-CAM açıklanabilirlik haritasıdır; segmentasyon maskesi
-    değildir.
--   SAM maskeleri verilen görüntü ve konum istemine bağlıdır.
--   Uzman etiketli segmentasyon maskeleri olmadığından Dice/IoU
-    değerlendirmesi yapılamamıştır.
--   Görsel olarak uygun maske klinik doğruluk anlamına gelmez.
-
-## 11. Ekip ve görev dağılımı
-
-Proje iki kişilik ekip tarafından yürütülmüştür.
-
--   **Ekip üyesi 1:** CNN ve ViT modellerinin geliştirilmesi, eğitimi ve
-    değerlendirilmesi.
--   **Ekip üyesi 2:** Swin Transformer, Grad-CAM ve SAM çalışmalarının
-    yürütülmesi; otomatik ve manuel kutu deneyleri.
--   **Ortak:** Sonuçların karşılaştırılması, raporlama ve sunum.
-
-## 12. Proje durumu
-
--   [x] Veri setinin hazırlanması ve veri bölünmesi
--   [x] CNN modelinin eğitimi ve testi
--   [x] ViT modelinin eğitimi ve testi
--   [x] Swin Transformer modelinin eğitimi ve testi
--   [x] Üç sınıflandırma modelinin sonuçlarının karşılaştırılması
--   [x] Grad-CAM deneyleri
--   [x] SAM ViT-B ile segmentasyon deneyleri
--   [x] Otomatik ve manuel konum yönlendirmelerinin incelenmesi
--   [ ] GitHub'daki tüm notebook ve görsel adlarının son kontrolü
--   [ ] Nihai rapor ve sunumun tamamlanması
-
-## Veri seti kaynağı
-
-[Brain Tumor MRI Dataset --
-Kaggle](https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset)
-
-------------------------------------------------------------------------
-
-**Bu proje üniversite dersi kapsamında eğitim ve araştırma amacıyla
-hazırlanmıştır.**
-
-
-## 13. NEURO AI LAB yerel web uygulaması
-
-### Windows'ta başlatma
-
-1. Python 3.12'yi PATH'e ekleyin. İlk kurulum için internet bağlantısı gerekir.
-2. Dört checkpoint'i proje kökündeki `models/` klasörüne koyun: `cnn_best.pth`, `vit_best.pth`, `swin_tiny_best.pth` ve `sam_vit_b_01ec64.pth`.
-3. `start.bat` dosyasına çift tıklayın. Başlatıcı eksik paketleri `.venv` içine kurar ve modeller yüklenince varsayılan tarayıcıyı açar. Yerel adres [127.0.0.1:8000](http://127.0.0.1:8000/) şeklindedir. Sunucuyu durdurmak için konsolda Ctrl+C kullanın.
-
-NVIDIA sürücüsü ve CUDA destekli PyTorch varsa modeller GPU'da çalışır. Ağırlıklar CPU belleğinde tutulur, her çıkarım için tek model GPU'ya taşınır ve işlem sonunda CPU'ya alınır. CUDA bellek hatasında ilgili model CPU üzerinde yeniden denenir. Kullanılan cihaz, sonuç kartlarında ve `GET /health` çıktısında gösterilir. Kurulum sırasında başlatıcı, `nvidia-smi` bulunursa PyTorch CUDA 12.4 paketini, aksi halde CPU paketini seçer.
-
-Canlı Demo'da en fazla 10 MiB ve 4096 × 4096 piksel boyutunda PNG/JPG yükleyin. Swin-Tiny `notumor` tahmini yaparsa otomatik SAM atlanır. Otomatik kutu bulunamazsa veya sonuç uygun görünmezse MR üzerinde kutu çizip manuel maske üretin. SAM kalite skoru modelin kendi tahminidir. Maskeler uzman tarafından doğrulanmış tümör sınırları değildir.
-
-### Yerel API ve test
-
-| Yöntem ve adres | İşlev |
-| --- | --- |
-| `GET /health` | Model yükleme durumu, sınıf sırası ve çalışma cihazı |
-| `POST /predict` | Üç modelin sınıf olasılıkları, çalışma cihazı ve önizleme |
-| `POST /segment?mode=auto` | Swin Grad-CAM ve uygun kutu bulunursa SAM maskesi |
-| `POST /segment?mode=manual&box=115,85,160,135` | 224 × 224 önizlemeye göre x1,y1,x2,y2 koordinatlarıyla SAM maskesi |
-
-POST isteklerinde görüntünün ham baytlarını `image/jpeg` veya `image/png` içerik türüyle gönderin. Görüntüler bellekte işlenir. Model ve SAM çıktılarındaki cihaz alanı `cuda` ya da `cpu` değerini alır.
-
-Sunucu açıkken gerçek veri seti arşiviyle duman testi çalıştırılabilir. CPU sunucusu için `--device cpu` kullanın.
-
-```powershell
-.\.venv\Scripts\python.exe tests/smoke_web.py "C:\veri\Brain_Tumor_MRI_Dataset.zip"
+```bash
+git clone https://github.com/saglamkubra/Brain-Tumor-MRI-Classification-Segmentation.git
+cd Brain-Tumor-MRI-Classification-Segmentation
 ```
 
-Çalıştırılan kontroller ve örnek çıktılar [uygulama test raporunda](WEB_TEST_REPORT.md) yer alır.
+### 9.2 Python bağımlılıkları
 
-## Swin deneyleri
+Uygun Python ve PyTorch ortamında:
 
-| Deney | Test kümesi | Accuracy | Glioma recall | Glioma → notumor | Kod ve sonuçlar |
-| --- | ---: | ---: | ---: | ---: | --- |
-| İlk Swin-Tiny ve SAM deneyi | Orijinal · 1.600 | %93,25 | %80,75 | 24 | [İlk notebook](notebooks/Swin_Transformer_SAM.ipynb) · [Test matrisi](results/swin_confusion_matrix.png) |
-| Swin-Tiny V3 başlangıç | V3 · 1.579 | %93,86 | %82,77 | 49 | [V3 notebook](notebooks/Swin_Tiny_V3_Notebook_V2.ipynb) · [V3 sonuçları](results/swin_v3/README.md) |
-| V3 fine-tuning, önceki paylaşılan çalışma | V3 · 1.579 | %94,11 | %81,98 | 39 | [Karşılaştırma raporu](SWIN_V3_TRAINING_REPORT.md) |
-| V3 fine-tuning, yerel çalışma | V3 · 1.579 | %94,05 | %81,98 | 41 | [Eğitim betiği](experiments/swin_v3/train.py) · [Yerel sonuçlar](results/swin_v3/finetuning/local_run/comparison.csv) |
-| V3 fine-tuning, Colab T4 | V3 · 1.579 | %93,98 | %81,72 | 39 | [Colab notebook](notebooks/Swin_Tiny_V3_FineTuning_Colab.ipynb) · Çıktılar Drive’da |
+```bash
+pip install -r requirements.txt
+```
 
-`Swin_Tiny_V3_Notebook_V2.ipynb` adındaki **V3** veri bölmesini, **Notebook_V2** notebook sürümünü belirtir. Web uygulamasında varsayılan Swin profili ilk deneyin `legacy` checkpoint’idir. V3 ile ilk deney farklı test listelerine sahiptir. V3 testinin hasta düzeyinde bağımsızlığı doğrulanmadı. Colab T4 satırı 18 Kasım 2026 tarihli Colab çıktısından alındı. Fine-tuning, başlangıç V3’e göre glioma → notumor hatasını azalttı ve glioma recall’ı düşürdü.
+CNN dağıtımına özel test edilmiş paket sürümleri `deployment_config.json` içinde belirtilmiştir.
 
-## Swin-Tiny V3 fine-tuning ve otomatik SAM
+### 9.3 Checkpoint dosyaları
 
-Yerel uygulamanın varsayılan Swin profili `legacy`. V3 ağırlıkları ayrı dosyalarda saklanıyor. Yerel inceleme için PowerShell'de aşağıdaki profil seçeneklerinden birini başlatmadan önce ayarlayabilirsiniz.
+Model ağırlıklarını uygulamanın beklediği `models/` klasörüne yerleştirin. Eski uygulama sürümlerindeki dosya adları ile yeni checkpoint adları farklı olabilir; gerçek yükleme yollarını `backend/` kodundan doğrulayın.
+
+Örnek mevcut Swin/SAM ağırlık adları:
+
+```text
+swin_tiny_v3_best.pth
+swin_tiny_v3_finetuned_best.pth
+sam_vit_b_01ec64.pth
+```
+
+CNN checkpoint'inin gerçek adı dağıtım paketinden doğrulanmalıdır.
+
+**Model ağırlıklarını ve ham MR veri setini GitHub'a yüklemeyin.**
+
+### 9.4 Yerel web uygulaması
+
+Windows ortamında, gerekli checkpoint'ler ve bağımlılıklar hazırsa:
 
 ```powershell
-$env:NEURO_SWIN_PROFILE = 'v3'
 .\start.bat
 ```
 
-`v3` profili `models/swin_tiny_v3_best.pth` dosyasını, `v3-finetuned` profili `models/swin_tiny_v3_finetuned_best.pth` dosyasını açar. Profil veya ağırlık hatası `/health` ve tahmin yanıtlarında görünür. Sınıf sırası glioma, meningioma, notumor, pituitary. V3 ham ağırlık dışa aktarımının sınıf sırası eğitim notebook’undaki sıraya dayanır.
+Önceki uygulama sürümünün yerel adresi: <http://127.0.0.1:8000/>.
 
-### Colab girdileri ve çıktıları
+Eski README'deki uygulama üç sınıflandırıcı bekliyordu. **ViT sınıflandırıcısı çıkarıldığı için**, mevcut backend ve `start.bat` dosyalarının CNN + Swin + SAM düzenine göre güncellenmiş olması gerekir. Bu entegrasyon doğrulanmadan uygulamanın eksiksiz çalıştığı varsayılmamalıdır.
 
-Drive’da `MyDrive/Beyin_Tumoru_Projesi/` altında `Brain_Tumor_MRI_Dataset.zip`, `veri_bolunmesi_v3/` ve `modeller/swin_tiny_v3_best.pth` bulunmalıdır. ZIP görüntüleri sağlar, V3 CSV’leri kullanılacak örnekleri belirler. Her çalıştırma ağırlığı `modeller/swin_v3_runs/colab_.../` ve raporları `results/swin_v3/finetuning/colab_.../` altında saklar. İki klasördeki aynı çalıştırma adı, ağırlık ve raporu eşleştirir.
+### 9.5 CNN Python çıkarımı
 
-Notebook `train.py` ile eğitimi ve değerlendirmeyi, `export_results.py` ile tablo ve grafik üretimini çalıştırır. `check_segmentation.py` bağımsız Grad-CAM/SAM kontrolüdür. Canlı Demo için `start.bat` yeterli.
+CNN dağıtım paketinde:
 
-### İsteğe bağlı yerel fine-tuning
+```python
+from inference import predict_image
 
-Fine-tuning betiği mevcut V3 checkpoint’inden başlar. Eğitim ve doğrulamayı kendi CSV listelerinden yürütür, en iyi epoch’u doğrulama verisiyle seçer ve test listesini bundan sonra açar. Var olan bir fine-tuned checkpoint’i korumak için tekrar çalıştırırken yeni bir çıktı klasörü seçin.
-
-```powershell
-.\.venv\Scripts\python.exe -m experiments.swin_v3.train --archive "C:\veri\Brain_Tumor_MRI_Dataset.zip" --splits "C:\veri\veri_bolunmesi_v3" --output models/yeni_deney --results results/swin_v3/finetuning/yeni_deney
-.\.venv\Scripts\python.exe -m experiments.swin_v3.export_results results/swin_v3/finetuning/yeni_deney
+result = predict_image("example.jpg")
+print(result)
 ```
 
-Metrikler için [Swin deneyleri tablosuna](#swin-deneyleri) ve [yerel eğitim raporuna](SWIN_V3_TRAINING_REPORT.md) bakın.
+## 10. Web uygulaması ve hedeflenen özellikler
 
-Canlı Demo, varsayılan olarak gri tonlamalı görüntüdeki parlak ve yerel kontrastı yüksek bir bölgeden kutu üretip SAM’e gönderir. Kullanıcı Grad-CAM kutusu yöntemini ve Stage 3 veya Stage 4 ısı haritasını seçebilir. Manuel kutu seçeneği de kullanılabilir. API’de `POST /segment?mode=auto&method=intensity&stage=4` görüntü işleme kutusu ve Stage 4 haritası döndürür. Parametresiz otomatik API çağrısı Stage 3 Grad-CAM kutusunu kullanır.
+Projenin web arayüzü aşağıdaki modülleri bir araya getirmeyi hedeflemektedir:
 
-Parlak bölge yöntemi anatomi, kenar veya görüntü artefaktlarını da seçebilir. Sınıflandırıcı ile kutu yöntemi çelişirse arayüz bunu bildirir. SAM skoru, modelin maske kalite tahminidir. Yerel denemelerde referans maskeler eşleştirilmediği için Dice/IoU raporlanmadı. V3 hasta düzeyi bağımsızlığı doğrulanmadı.
+| Modül | İşlev |
+|---|---|
+| MR Analizi | Yüklenen görüntü için CNN ve Swin tahminleri |
+| Model Karşılaştırma | Sınıf skorları ve iki modelin sonuçları |
+| Açıklanabilir AI | Swin Grad-CAM görselleri |
+| SAM Segmentasyon | Otomatik ve manuel kutu ile maske |
+| Performans Paneli | Gerçek deney grafikleri ve metrikler |
+| Akademik Kaynaklar | Tahmin edilen sınıfla ilgili PubMed makaleleri (planlanan) |
+| Analiz Raporu | Görsel ve sonuçlardan PDF raporu (planlanan) |
+
+**Durum notu:** Tablo, önceki uygulamada bulunan araştırma işlevlerini ve geliştirilmesi planlanan özellikleri birlikte listeler. PubMed entegrasyonu ve PDF raporu bu README hazırlanırken çalışır durumda doğrulanmamıştır. Sınıflandırma ve segmentasyonun güncel backend'deki çalışma durumu da uygulama testleriyle doğrulanmalıdır.
+
+### Önceki yerel API uç noktaları
+
+| Uç nokta | Açıklama |
+|---|---|
+| `GET /health` | Model ve cihaz durumu |
+| `POST /predict` | Sınıflandırma çıktıları |
+| `POST /segment?mode=auto` | Otomatik konumlandırma ve segmentasyon |
+| `POST /segment?mode=manual` | Kullanıcının seçtiği kutu ile segmentasyon |
+
+Bunlar önceki uygulama sürümünde belgelenen adreslerdir; güncel API'de kontrol edilmelidir.
+
+## 11. Google Drive ve model dosyaları
+
+📁 **[Beyin Tümörü Projesi — Google Drive klasörünü aç](https://drive.google.com/drive/folders/1aOvUcdAECIrp_yA3w9OtNYRz5jaUeej0?usp=drive_link)**
+
+Google Drive, model checkpoint'leri, deney sonuçları ve büyük araştırma dosyaları için kullanılır. Erişim, klasörün paylaşım izinlerine bağlıdır.
+
+> Bu README'de kullanılan grafik isimleri proje tarafından paylaşılan dosya listesine dayanmaktadır. Drive içindeki dosyaların bire bir konumu ve erişim izinleri ayrıca doğrulanmalıdır.
+
+## 12. Sınırlılıklar ve etik kullanım
+
+- Modeller klinik olarak doğrulanmamıştır.
+- Model skorları kalibre edilmiş tıbbi olasılıklar değildir.
+- Yüksek skorlu yanlış tahminler gözlenmiştir.
+- Glioma görüntülerinin `notumor` olarak tahmin edilmesi kritik bir hata türüdür.
+- CNN ve Swin sonuçları farklı test listelerine dayanıyorsa doğrudan kıyaslanamaz.
+- Veri bölünmesinin hasta düzeyinde bağımsızlığı doğrulanmamıştır.
+- Grad-CAM, tümör sınırlarını belirleyen bir segmentasyon yöntemi değildir.
+- SAM maskeleri uzman etiketli referanslarla doğrulanmamıştır.
+- Görüntülerdeki kişisel/sağlık bilgileri korunmalıdır.
+
+## 13. Ekip ve görev dağılımı
+
+| Ekip üyesi | Çalışma alanı |
+|---|---|
+| **Sıla** | CNN modelinin geliştirilmesi, eğitimi ve değerlendirilmesi |
+| **Kübra** | Swin Transformer, Grad-CAM, SAM ve ilgili deneyler |
+| **Ortak** | Web arayüzü, sonuçların sunumu, raporlama |
+
+## 14. Proje durumu
+
+- [x] CNN sınıflandırma modelinin eğitilmesi ve test edilmesi
+- [x] Swin Transformer modelinin eğitilmesi ve test edilmesi
+- [x] Grad-CAM deneylerinin gerçekleştirilmesi
+- [x] SAM ile otomatik ve manuel segmentasyon deneylerinin yapılması
+- [x] Model performans grafiklerinin hazırlanması
+- [ ] CNN + Swin + SAM güncel web entegrasyonunun uçtan uca doğrulanması
+- [ ] PubMed makale entegrasyonunun tamamlanması
+- [ ] PDF analiz raporunun tamamlanması
+- [ ] Son sunum ve tüm dosya bağlantılarının kontrolü
+
+---
+
+<div align="center">
+
+**Beyin Tümörü Analiz Sistemi**
+
+*CNN · Swin Transformer · Grad-CAM · SAM*
+
+**Yalnızca eğitim ve akademik araştırma amaçlıdır.**
+
+</div>
