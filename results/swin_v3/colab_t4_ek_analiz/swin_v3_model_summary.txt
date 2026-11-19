@@ -1,0 +1,13 @@
+Swin-Tiny V3 | timm swin_tiny_patch4_window7_224
+RGB 224x224 | 4 sınıf
+Toplam parametre: 27,522,430
+Bölüm | Girdi | Çıktı | Parametre
+Patch embedding | (1, 3, 224, 224) | (1, 56, 56, 96) | 4,896
+Stage 1 | (1, 56, 56, 96) | (1, 56, 56, 96) | 224,694
+Stage 2 | (1, 56, 56, 96) | (1, 28, 28, 192) | 966,252
+Stage 3 | (1, 28, 28, 192) | (1, 14, 14, 384) | 10,955,400
+Stage 4 | (1, 14, 14, 384) | (1, 7, 7, 768) | 15,366,576
+Son norm | (1, 7, 7, 768) | (1, 7, 7, 768) | 1,536
+Sınıflandırıcı | (1, 7, 7, 768) | (1, 4) | 3,076
+
+Şekiller V3 mimarisinin yerel CPU ileri geçişiyle ölçüldü. Colab fine-tuning mimariyi değiştirmedi.

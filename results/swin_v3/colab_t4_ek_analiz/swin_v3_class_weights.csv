@@ -1,0 +1,5 @@
+﻿class,class_index,v3_train_count,training_percent,colab_loss_weight
+glioma,0,1116,28.8372,1.5
+meningioma,1,1032,26.6667,1.0
+notumor,2,642,16.5891,1.0
+pituitary,3,1080,27.907,1.0
