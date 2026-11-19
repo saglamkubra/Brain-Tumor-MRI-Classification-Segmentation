@@ -17,12 +17,16 @@
 > [!IMPORTANT]
 > Bu proje yalnızca **eğitim ve akademik araştırma** amacıyla geliştirilmiştir. Klinik tanı, tarama veya tedavi aracı değildir. Model skorları kalibre edilmiş tıbbi olasılıklar değildir; Grad-CAM haritaları ve SAM maskeleri uzman tarafından doğrulanmış tümör sınırları değildir.
 
-## Hızlı başlangıç
+## 🚀 Hızlı Başlangıç
 
-- **Yerel uygulama (Windows):** Uygun Python ortamı ve model checkpoint'leri hazırsa `start.bat` dosyasını çalıştırın. Ayrıntılar için [kurulum](#9-kurulum-ve-çalıştırma) bölümüne bakın.
-- **Swin Transformer eğitim/deneyleri:** [Colab notebook'u](https://colab.research.google.com/github/saglamkubra/Brain-Tumor-MRI-Classification-Segmentation/blob/main/notebooks/Swin_Tiny_V3_FineTuning_Colab.ipynb) ve [deney klasörü](experiments/swin_v3/).
-- **Model ağırlıkları ve araştırma materyalleri:** [Google Drive klasörü](https://drive.google.com/drive/folders/1aOvUcdAECIrp_yA3w9OtNYRz5jaUeej0?usp=drive_link).
--
+- **Yerel Web Uygulaması (Windows):** Uygun Python ortamı ve model ağırlıkları hazırsa `start.bat` dosyasını çalıştırın.
+- **CNN (Convolutional Neural Network):** CNN mimarisi, model eğitimi, sınıflandırma sonuçları ve performans analizleri proje dosyalarında yer almaktadır.
+- **Swin Transformer (Swin-Tiny):** [Google Colab eğitim notebook'u](https://colab.research.google.com/github/saglamkubra/Brain-Tumor-MRI-Classification-Segmentation/blob/main/notebooks/Swin_Tiny_V3_FineTuning_Colab.ipynb) üzerinden eğitim ve deneyler incelenebilir.
+- **Grad-CAM ve SAM:** Açıklanabilir yapay zekâ haritaları, otomatik ve manuel segmentasyon deneyleri proje kapsamında sunulmaktadır.
+- **Veri Seti:** [Brain Tumor MRI Dataset — Kaggle](https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset)
+- **Model Ağırlıkları ve Araştırma Materyalleri:** [Google Drive Proje Klasörü](https://drive.google.com/drive/folders/1aOvUcdAECIrp_yA3w9OtNYRz5jaUeej0?usp=drive_link)
+
+
 ## 1. Projenin amacı
 
 **Beyin Tümörü Analiz Sistemi**, beyin MR görüntülerini dört sınıfa ayıran iki farklı derin öğrenme yaklaşımını inceleyen ve sonuçları açıklanabilir yapay zekâ ile görselleştiren bir üniversite projesidir.
