@@ -109,7 +109,7 @@ Checkpoint, `torch.load(weights_only=True)` ile yüklenebilecek biçimde hazırl
 
 CNN, **224 × 224 gri tonlamalı MR görüntülerini** dört sınıfta sınıflandırır. Modelin en iyi eğitim noktası 33. epoch olarak raporlanmıştır. Test doğruluğu **%89,61**, macro F1-score **%89,55** değerindedir. Modelin yüksek skorla hatalı tahminler yapabildiği gözlenmiştir; bu nedenle sınıf skorları tıbbi güven ölçütü olarak yorumlanmamalıdır.
 
-CNN için eğitim, model mimarisi, hata analizi, sınıf bazlı metrikler ve Grad-CAM çalışmalarına ait **29 görsel** [CNN analiz galerisi](#61-cnn-analiz-galerisi) bölümünde sunulmuştur. Grafikler Sıla tarafından GitHub deposuna eklenmiştir. Görsellerin hangi checkpoint ve veri bölünmesine ait olduğu, ilgili deney kayıtlarıyla birlikte değerlendirilmelidir.
+CNN için model mimarisi, eğitim, sınıf bazlı performans ve Grad-CAM çalışmalarından seçilen **6 önemli görsel** [CNN analiz galerisi](#61-cnn--seçilmiş-analiz-görselleri) bölümünde sunulmuştur. Diğer grafikler GitHub klasöründe bulunmaktadır. Grafikler Sıla tarafından GitHub deposuna eklenmiştir. Görsellerin hangi checkpoint ve veri bölünmesine ait olduğu, ilgili deney kayıtlarıyla birlikte değerlendirilmelidir.
 
 ### 4.2 Swin Transformer (Swin-Tiny)
 
@@ -198,139 +198,47 @@ Satırlar gerçek, sütunlar tahmin edilen sınıftır.
 
 ## 6. Deney görselleri
 
-CNN grafiklerinin GitHub yolu `results/CNN_V2_sonuclar/`, Swin ve SAM grafiklerinin yolu `results/swin_v3/swin_sam_grafikleri/` olarak kullanılmıştır. Görsellerin depoda bu yollarda bulunması gerekir. Paylaşılan örnek MR görsellerinin lisans ve gizlilik uygunluğu ayrıca kontrol edilmelidir.
+CNN grafiklerinin GitHub yolu `results/CNN_V2 sonuçlar/`, Swin ve SAM grafiklerinin yolu `results/swin_v3/swin_sam_grafikleri/` olarak kullanılmıştır. Görsellerin depoda bu yollarda bulunması gerekir. Paylaşılan örnek MR görsellerinin lisans ve gizlilik uygunluğu ayrıca kontrol edilmelidir.
 
-### 6.1 CNN analiz galerisi
+### 6.1 CNN — Seçilmiş analiz görselleri
 
-Sıla tarafından yüklenen **29 CNN analiz grafiği** aşağıda temalarına göre sunulmuştur. Bu görsellerin başlıkları dosya adlarına göre verilmiştir; her grafikteki sayısal değerler için görselin kendisi ve deney kaydı esas alınmalıdır.
+CNN için en önemli altı grafik aşağıda gösterilmiştir. [Tüm CNN grafiklerine GitHub klasöründen ulaşabilirsiniz](results/CNN_V2%20sonu%C3%A7lar/).
 
-#### Veri hazırlama, mimari ve eğitim
+#### 1. CNN mimari analizi
 
-**01. Veri artırma örnekleri**
+![CNN mimari analizi](results/CNN_V2%20sonu%C3%A7lar/03_model_architecture_analysis.png)
 
-![CNN — Veri artırma örnekleri](results/CNN_V2_sonuclar/01_data_augmentation_examples.png)
+*CNN mimarisinin katmanları ve model yapısı.*
 
-**02. Sınıf dağılımı ve ağırlıklar**
+#### 2. CNN eğitim ve doğrulama eğrileri
 
-![CNN — Sınıf dağılımı ve ağırlıklar](results/CNN_V2_sonuclar/02_class_distribution_and_weights.png)
+![CNN eğitim ve doğrulama eğrileri](results/CNN_V2%20sonu%C3%A7lar/04_accuracy_loss_curves.png)
 
-**03. CNN mimari analizi**
+*Eğitim sürecindeki doğruluk ve kayıp eğrileri.*
 
-![CNN — CNN mimari analizi](results/CNN_V2_sonuclar/03_model_architecture_analysis.png)
+#### 3. CNN karmaşıklık matrisi
 
-**04. Accuracy ve loss eğrileri**
+![CNN karmaşıklık matrisi](results/CNN_V2%20sonu%C3%A7lar/07_confusion_matrix.png)
 
-![CNN — Accuracy ve loss eğrileri](results/CNN_V2_sonuclar/04_accuracy_loss_curves.png)
+*Dört sınıfta doğru ve yanlış sınıflandırmalar.*
 
-**05. Sınıflandırma metriklerinin değişimi**
+#### 4. CNN sınıf bazlı performans
 
-![CNN — Sınıflandırma metriklerinin değişimi](results/CNN_V2_sonuclar/05_classification_metric_curves.png)
+![CNN sınıf bazlı performans](results/CNN_V2%20sonu%C3%A7lar/09_class_performance_metrics.png)
 
-**06. Öğrenme oranı analizi**
+*Sınıf bazlı değerlendirme metrikleri.*
 
-![CNN — Öğrenme oranı analizi](results/CNN_V2_sonuclar/06_learning_rate_analysis.png)
+#### 5. CNN Grad-CAM
 
-#### Test sonuçları ve sınıf bazlı analizler
+![CNN Grad-CAM](results/CNN_V2%20sonu%C3%A7lar/20_gradcam_correct_predictions.png)
 
-**07. Karmaşıklık matrisi**
+*Doğru sınıflandırılmış örneklerde açıklanabilirlik haritaları.*
 
-![CNN — Karmaşıklık matrisi](results/CNN_V2_sonuclar/07_confusion_matrix.png)
+#### 6. CNN genel performans paneli
 
-**08. Yanlış sınıflandırma örüntüleri**
+![CNN genel performans paneli](results/CNN_V2%20sonu%C3%A7lar/28_final_performance_dashboard.png)
 
-![CNN — Yanlış sınıflandırma örüntüleri](results/CNN_V2_sonuclar/08_misclassification_patterns.png)
-
-**09. Sınıf bazlı performans**
-
-![CNN — Sınıf bazlı performans](results/CNN_V2_sonuclar/09_class_performance_metrics.png)
-
-**10. Duyarlılık ve özgüllük analizi**
-
-![CNN — Duyarlılık ve özgüllük analizi](results/CNN_V2_sonuclar/10_sensitivity_specificity_analysis.png)
-
-**11. İkili tümör tespit analizi**
-
-![CNN — İkili tümör tespit analizi](results/CNN_V2_sonuclar/11_binary_tumor_detection.png)
-
-**12. ROC eğrileri**
-
-![CNN — ROC eğrileri](results/CNN_V2_sonuclar/12_roc_curve_analysis.png)
-
-**13. Precision–recall eğrileri**
-
-![CNN — Precision–recall eğrileri](results/CNN_V2_sonuclar/13_precision_recall_curves.png)
-
-**14. AUC ve AP karşılaştırması**
-
-![CNN — AUC ve AP karşılaştırması](results/CNN_V2_sonuclar/14_auc_ap_comparison.png)
-
-#### Doğru ve yanlış tahmin örnekleri
-
-**15. Doğru tahmin örnekleri**
-
-![CNN — Doğru tahmin örnekleri](results/CNN_V2_sonuclar/15_correct_prediction_examples.png)
-
-**16. Yanlış tahmin örnekleri**
-
-![CNN — Yanlış tahmin örnekleri](results/CNN_V2_sonuclar/16_incorrect_prediction_examples.png)
-
-**17. Yüksek skorlu yanlış tahminler**
-
-![CNN — Yüksek skorlu yanlış tahminler](results/CNN_V2_sonuclar/17_high_confidence_errors.png)
-
-**18. Tahmin skorlarının analizi**
-
-![CNN — Tahmin skorlarının analizi](results/CNN_V2_sonuclar/18_confidence_analysis.png)
-
-#### CNN Grad-CAM analizleri
-
-**19. İlk Grad-CAM denemesi**
-
-![CNN — İlk Grad-CAM denemesi](results/CNN_V2_sonuclar/19_gradcam_initial_test.png)
-
-**20. Doğru tahminlerde Grad-CAM**
-
-![CNN — Doğru tahminlerde Grad-CAM](results/CNN_V2_sonuclar/20_gradcam_correct_predictions.png)
-
-**21. Yanlış tahminlerde Grad-CAM**
-
-![CNN — Yanlış tahminlerde Grad-CAM](results/CNN_V2_sonuclar/21_gradcam_incorrect_predictions.png)
-
-**22. Yüksek skorlu hatalarda Grad-CAM**
-
-![CNN — Yüksek skorlu hatalarda Grad-CAM](results/CNN_V2_sonuclar/22_gradcam_high_confidence_errors.png)
-
-**23. Sınıflar arası Grad-CAM karşılaştırması**
-
-![CNN — Sınıflar arası Grad-CAM karşılaştırması](results/CNN_V2_sonuclar/23_gradcam_class_comparison.png)
-
-#### Genel performans ve deney karşılaştırmaları
-
-**24. Veri seti performans özeti**
-
-![CNN — Veri seti performans özeti](results/CNN_V2_sonuclar/24_final_dataset_performance.png)
-
-**25. Genelleme farkı analizi**
-
-![CNN — Genelleme farkı analizi](results/CNN_V2_sonuclar/25_generalization_gap_analysis.png)
-
-**26. CNN deneyleri arası performans karşılaştırması**
-
-![CNN — CNN deneyleri arası performans karşılaştırması](results/CNN_V2_sonuclar/26_cnn_v1_v2_performance_comparison.png)
-
-**27. Sınıf bazlı deney karşılaştırması**
-
-![CNN — Sınıf bazlı deney karşılaştırması](results/CNN_V2_sonuclar/27_class_level_performance_comparison.png)
-
-**28. Genel performans paneli**
-
-![CNN — Genel performans paneli](results/CNN_V2_sonuclar/28_final_performance_dashboard.png)
-
-**29. Son model doğrulama grafiği**
-
-![CNN — Son model doğrulama grafiği](results/CNN_V2_sonuclar/29_final_model_verification.png)
-
-> **Not:** CNN sınıflandırma modülü ile araştırma amaçlı Grad-CAM analizleri ayrı bileşenlerdir. Grad-CAM, doğrulanmış tümör sınırlarını göstermez.
+*CNN değerlendirmesinin görsel özeti.*
 
 ### 6.2 Swin Transformer deney karşılaştırması
 
