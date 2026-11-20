@@ -19,12 +19,12 @@ if errorlevel 1 (
     )
     if errorlevel 1 goto error
 )
-"%NEURO_PY%" -c "import fastapi, uvicorn, timm, pytorch_grad_cam, segment_anything, cv2, numpy, PIL" >nul 2>&1
+"%NEURO_PY%" -c "import fastapi, uvicorn, timm, pytorch_grad_cam, segment_anything, cv2, numpy, PIL, reportlab" >nul 2>&1
 if errorlevel 1 (
     "%NEURO_PY%" -m pip install -r requirements.txt
     if errorlevel 1 goto error
 )
-echo NEURO AI LAB baslatiliyor: http://127.0.0.1:8000/
+echo NEURO AI LAB baslatiliyor...
 "%NEURO_PY%" -m backend.launch %*
 if errorlevel 1 goto error
 exit /b 0

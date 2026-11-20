@@ -1,0 +1,262 @@
+[
+  {
+    "label": "meningioma",
+    "source": "Testing/meningioma/Te-me_263.jpg",
+    "sha256": "cf0fd9ba3e6fa589f5b775d19e83c523c8d653e96b7652a206072d45ce0f5c0f",
+    "predictions": [
+      {
+        "model": "CNN",
+        "class": "meningioma",
+        "probabilities": {
+          "glioma": 0.06270869076251984,
+          "meningioma": 0.8445062637329102,
+          "notumor": 0.03589509055018425,
+          "pituitary": 0.056890010833740234
+        },
+        "device": "cuda"
+      },
+      {
+        "model": "ViT",
+        "class": "meningioma",
+        "probabilities": {
+          "glioma": 0.006642116233706474,
+          "meningioma": 0.989825427532196,
+          "notumor": 4.2788884456967935e-05,
+          "pituitary": 0.0034897602163255215
+        },
+        "device": "cuda"
+      },
+      {
+        "model": "Swin-Tiny",
+        "class": "meningioma",
+        "probabilities": {
+          "glioma": 4.063784217578359e-06,
+          "meningioma": 0.9999817609786987,
+          "notumor": 1.3670677617483307e-05,
+          "pituitary": 4.378873370569636e-07
+        },
+        "device": "cuda"
+      }
+    ],
+    "class_order": [
+      "glioma",
+      "meningioma",
+      "notumor",
+      "pituitary"
+    ],
+    "gradcam_device": "cuda",
+    "gradcam_class": "meningioma",
+    "gradcam": "/assets/gallery/meningioma-gradcam.png",
+    "original": "/assets/gallery/meningioma-original.jpg",
+    "auto": {
+      "status": "hazır",
+      "box": [
+        25,
+        22,
+        198,
+        202
+      ],
+      "device": "cuda",
+      "score": 0.9769353866577148,
+      "pixels": 27787,
+      "image": "/assets/gallery/meningioma-auto.png",
+      "mask": "/assets/gallery/meningioma-auto-mask.png"
+    },
+    "manual": {
+      "status": "hazır",
+      "box": [
+        115.0,
+        85.0,
+        160.0,
+        135.0
+      ],
+      "device": "cuda",
+      "score": 0.9354524612426758,
+      "pixels": 732,
+      "image": "/assets/gallery/meningioma-manual.png",
+      "mask": "/assets/gallery/meningioma-manual-mask.png"
+    }
+  },
+  {
+    "label": "pituitary",
+    "source": "Testing/pituitary/Te-pi_1.jpg",
+    "sha256": "79c20f70982dc8182457e7a5b5de051b0da59bc0277d27acefc06f7079531e2f",
+    "predictions": [
+      {
+        "model": "CNN",
+        "class": "pituitary",
+        "probabilities": {
+          "glioma": 0.0008468329906463623,
+          "meningioma": 0.08770649880170822,
+          "notumor": 0.008562046103179455,
+          "pituitary": 0.9028846025466919
+        },
+        "device": "cuda"
+      },
+      {
+        "model": "ViT",
+        "class": "pituitary",
+        "probabilities": {
+          "glioma": 0.016224363818764687,
+          "meningioma": 0.12119467556476593,
+          "notumor": 0.00016373093239963055,
+          "pituitary": 0.8624172210693359
+        },
+        "device": "cuda"
+      },
+      {
+        "model": "Swin-Tiny",
+        "class": "pituitary",
+        "probabilities": {
+          "glioma": 1.4167521840136033e-06,
+          "meningioma": 0.00023174045782070607,
+          "notumor": 4.775509751198115e-06,
+          "pituitary": 0.9997621178627014
+        },
+        "device": "cuda"
+      }
+    ],
+    "class_order": [
+      "glioma",
+      "meningioma",
+      "notumor",
+      "pituitary"
+    ],
+    "gradcam_device": "cuda",
+    "gradcam_class": "pituitary",
+    "gradcam": "/assets/gallery/pituitary-gradcam.png",
+    "original": "/assets/gallery/pituitary-original.jpg",
+    "auto": {
+      "status": "hazır",
+      "box": [
+        25,
+        70,
+        199,
+        193
+      ],
+      "device": "cuda",
+      "score": 0.9317970275878906,
+      "pixels": 18247,
+      "image": "/assets/gallery/pituitary-auto.png",
+      "mask": "/assets/gallery/pituitary-auto-mask.png"
+    }
+  },
+  {
+    "label": "notumor",
+    "source": "Testing/notumor/Te-no_1.jpg",
+    "sha256": "dc8a25950f072b9830140f60f08958ea8bea1716b96d5f8c7b09017bd4ad67e7",
+    "predictions": [
+      {
+        "model": "CNN",
+        "class": "notumor",
+        "probabilities": {
+          "glioma": 5.68531447697751e-07,
+          "meningioma": 0.03827078640460968,
+          "notumor": 0.9510141015052795,
+          "pituitary": 0.010714612901210785
+        },
+        "device": "cuda"
+      },
+      {
+        "model": "ViT",
+        "class": "notumor",
+        "probabilities": {
+          "glioma": 1.4014965927344747e-05,
+          "meningioma": 0.0001288727216888219,
+          "notumor": 0.9985150694847107,
+          "pituitary": 0.0013420460745692253
+        },
+        "device": "cuda"
+      },
+      {
+        "model": "Swin-Tiny",
+        "class": "notumor",
+        "probabilities": {
+          "glioma": 4.659226306102937e-06,
+          "meningioma": 2.166792364732828e-05,
+          "notumor": 0.9999663829803467,
+          "pituitary": 7.309385182452388e-06
+        },
+        "device": "cuda"
+      }
+    ],
+    "class_order": [
+      "glioma",
+      "meningioma",
+      "notumor",
+      "pituitary"
+    ],
+    "gradcam_device": "cuda",
+    "gradcam_class": "notumor",
+    "gradcam": "/assets/gallery/notumor-gradcam.png",
+    "original": "/assets/gallery/notumor-original.jpg",
+    "auto": {
+      "status": "atlandı",
+      "message": "Swin-Tiny tümör yok sınıfını seçti. Otomatik SAM atlandı."
+    }
+  },
+  {
+    "label": "glioma",
+    "source": "Testing/glioma/Te-gl_1.jpg",
+    "sha256": "a629aadd24c31daa08d9e79dce6c1dfcfa77ac95775b4683ec29663c61cbf9dd",
+    "predictions": [
+      {
+        "model": "CNN",
+        "class": "notumor",
+        "probabilities": {
+          "glioma": 0.0024075028486549854,
+          "meningioma": 0.3684694170951843,
+          "notumor": 0.4030974507331848,
+          "pituitary": 0.22602561116218567
+        },
+        "device": "cuda"
+      },
+      {
+        "model": "ViT",
+        "class": "glioma",
+        "probabilities": {
+          "glioma": 0.6251063346862793,
+          "meningioma": 0.05775018781423569,
+          "notumor": 0.2660834789276123,
+          "pituitary": 0.051059991121292114
+        },
+        "device": "cuda"
+      },
+      {
+        "model": "Swin-Tiny",
+        "class": "meningioma",
+        "probabilities": {
+          "glioma": 7.89411278674379e-05,
+          "meningioma": 0.999881386756897,
+          "notumor": 3.4829576179618016e-05,
+          "pituitary": 4.884690042672446e-06
+        },
+        "device": "cuda"
+      }
+    ],
+    "class_order": [
+      "glioma",
+      "meningioma",
+      "notumor",
+      "pituitary"
+    ],
+    "gradcam_device": "cuda",
+    "gradcam_class": "meningioma",
+    "gradcam": "/assets/gallery/glioma-gradcam.png",
+    "original": "/assets/gallery/glioma-original.jpg",
+    "auto": {
+      "status": "hazır",
+      "box": [
+        53,
+        38,
+        183,
+        124
+      ],
+      "device": "cuda",
+      "score": 0.9222663640975952,
+      "pixels": 8989,
+      "image": "/assets/gallery/glioma-auto.png",
+      "mask": "/assets/gallery/glioma-auto-mask.png"
+    }
+  }
+]

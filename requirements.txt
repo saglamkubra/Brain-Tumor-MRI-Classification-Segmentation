@@ -14,3 +14,4 @@ tqdm
 # Yerel NEURO AI LAB web uygulamasi
 fastapi
 uvicorn
+reportlab

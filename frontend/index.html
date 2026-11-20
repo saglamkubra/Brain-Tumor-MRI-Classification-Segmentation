@@ -1,19 +1,115 @@
 <!doctype html>
-<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NEURO AI LAB</title><link rel="stylesheet" href="/assets/style.css"><script src="/assets/app.js" defer></script></head>
+<html lang="tr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEURO AI LAB | Beyin MR Analizi</title>
+<link rel="stylesheet" href="/assets/style.css"><script defer src="/assets/app.js"></script><script defer src="/assets/explanation.js"></script>
+</head>
 <body>
-<header><div class="shell nav"><a class="brand" href="#ana"><span class="mark">✳</span> NEURO AI LAB</a><nav aria-label="Ana menü"><a href="#modeller">Modeller</a><a href="#karsilastirma">Sonuç Karşılaştırması</a><a href="#yontem">Grad-CAM ve SAM</a><a href="#hakkinda">Proje Hakkında</a></nav><a class="button compact" href="#demo">Canlı Demo <span>↗</span></a></div></header>
-<main class="shell">
-<section id="ana" class="hero"><div><p class="eyebrow"><span class="dot"></span> BEYİN MR ARAŞTIRMALARI</p><h1>Beyin MR’ını<br><em>üç modelle</em> inceleyin.</h1><p>CNN, ViT ve Swin-Tiny tahminlerini karşılaştırın. Swin’in kararında etkili bölgeleri ve SAM segmentasyonunu aynı görüntü üzerinde keşfedin.</p><a class="button" href="#demo">MR görüntüsü yükle <span>↗</span></a></div><figure class="hero-image"><img src="/results/ornek_01_swin_sam_sonuc.png" alt="Arşivdeki Swin ve SAM segmentasyon deneyi"><figcaption>Arşivden · Swin Grad-CAM ve SAM deneyi</figcaption></figure></section>
-<section id="demo"><div class="section-head"><div><p class="eyebrow">YEREL MODEL ÇIKARIMI</p><h2>Canlı Demo</h2></div><p class="device" id="health" role="status">Modeller kontrol ediliyor…</p></div>
-<div class="panel upload"><div><label for="file">MR görüntüsü</label><p>PNG veya JPG · en fazla 10 MiB ve 4096 × 4096</p><input type="file" id="file" accept=".png,.jpg,.jpeg,image/png,image/jpeg"></div><button id="predict" disabled>Tahminleri karşılaştır</button></div>
-<p id="status" role="status"></p><div id="predictions" class="grid predicted"></div><div id="visuals"></div>
+<aside class="sidebar">
+<a href="#genel" class="brand"><span class="logo" aria-hidden="true">N</span> NEURO AI LAB</a>
+<nav aria-label="Bölümler">
+<a href="#genel" data-i18n>Genel Bakış</a><a href="#analiz" data-i18n>MR Analiz Merkezi</a>
+<a href="#gorsel" data-i18n>Grad-CAM Analizi</a><a href="#sam-panel" data-i18n>SAM Segmentasyon</a>
+<a href="#performans" data-i18n>Model Karşılaştırması</a><a href="#literatur" data-i18n>Bilimsel Yayınlar</a>
+<a href="#deneyler" data-i18n>Deney Grafikleri</a><a href="#rapor" data-i18n>Raporlar</a>
+</nav>
+<div class="preferences"><label><span data-i18n>Tema</span><select id="theme"><option value="dark" data-i18n>Koyu</option><option value="light" data-i18n>Açık</option></select></label>
+<label><span data-i18n>Dil</span><select id="language"><option value="tr">Türkçe</option><option value="en">English</option></select></label></div>
+<p id="health" role="status">Model durumu sorgulanıyor…</p>
+</aside>
+<main>
+<header id="genel" class="hero">
+<div><h1 data-i18n>Beyin Tümörü Analiz Sistemi</h1><p data-i18n>CNN ve Swin-Tiny tahminlerini karşılaştırın. Grad-CAM ile modelin odaklandığı alanları inceleyin ve SAM ile aday bölgede maske üretin.</p><a class="button primary" href="#analiz" data-i18n>MR analizine geç</a></div>
+<img src="/assets/gallery/meningioma-gradcam.png" alt="Beyin MR örneğinde Grad-CAM görselleştirmesi" width="256" height="256">
+</header>
+<div class="grid four technology"><div class="panel"><strong>CNN</strong><small data-i18n>Gri tonlu MR sınıflandırma</small></div><div class="panel"><strong>Swin-Tiny</strong><small data-i18n>RGB MR sınıflandırma</small></div><div class="panel"><strong>Grad-CAM</strong><small data-i18n>İki Swin katmanını karşılaştırma</small></div><div class="panel"><strong>SAM ViT-B</strong><small data-i18n>Kutu tabanlı maske</small></div></div><p class="notice" data-i18n>Araştırma ve eğitim amaçlıdır. Klinik teşhis için kullanılamaz.</p>
+<section id="analiz"><h2 data-i18n>MR Analiz Merkezi</h2>
+<div class="panel upload"><label for="file" data-i18n>MR görüntüsü seç</label>
+<input type="file" id="file" accept="image/png,image/jpeg" aria-describedby="upload-help">
+<small id="upload-help" data-i18n>JPG veya PNG · En fazla 10 MiB · Dosya seçildiğinde analiz otomatik başlar.</small></div>
+<p id="analysis-status" role="status"></p><div id="scores" class="grid two"></div>
+<p id="test-context" class="muted" data-i18n hidden>İki model aynı 1.579 görüntülük test kümesi üzerinde raporlanmıştır (veri_bolunmesi_v3). Mimariler ve eğitim koşulları farklıdır; bu değerler doğrudan üstünlük anlamına gelmez. Hasta düzeyinde veri ayrımı doğrulanmamıştır.</p><p class="muted" data-i18n>Test doğruluğu, modelin ilgili test kümesinde doğru sınıflandırdığı görüntülerin oranıdır. Model skoru, sınıflandırıcının bu görüntüde bir sınıfa verdiği puandır. Tek görüntüdeki yüksek skor klinik risk veya test doğruluğu göstermez.</p>
 </section>
-<section id="modeller"><p class="eyebrow">MİMARİLER</p><h2>Modeller</h2><div class="grid models"><article class="panel"><h3>CNN</h3><p>Gri tonlamalı görüntülerde üç evrişim bloğuyla sınıflandırma.</p></article><article class="panel"><h3>ViT-B/16</h3><p>Görüntü parçaları arasındaki ilişkileri kullanan Vision Transformer.</p></article><article class="panel"><h3>Swin-Tiny</h3><p>Kaydırmalı pencerelerle sınıflandırma ve Grad-CAM için aktivasyonlar.</p></article><article class="panel"><h3>SAM ViT-B</h3><p>Otomatik ya da elle çizilmiş kutuyla yönlendirilen maske üretimi.</p></article></div></section>
-<section id="karsilastirma"><p class="eyebrow">NOTEBOOK DENEYLERİ</p><h2>Sonuç Karşılaştırması</h2><div class="grid archive">
-<figure class="panel"><a href="/results/cnn_confusion_matrix.png"><img loading="lazy" src="/results/cnn_confusion_matrix.png" alt="CNN test karmaşıklık matrisi"></a><figcaption>CNN · Test karmaşıklık matrisi</figcaption></figure>
-<figure class="panel"><a href="/results/vit_confusion_matrix.png"><img loading="lazy" src="/results/vit_confusion_matrix.png" alt="ViT test karmaşıklık matrisi"></a><figcaption>ViT · Test karmaşıklık matrisi</figcaption></figure>
-<figure class="panel"><a href="/results/swin_confusion_matrix.png"><img loading="lazy" src="/results/swin_confusion_matrix.png" alt="Swin test karmaşıklık matrisi"></a><figcaption>Swin-Tiny · Test karmaşıklık matrisi</figcaption></figure>
+<section id="gorsel"><h2 data-i18n>Grad-CAM ve SAM</h2>
+<div class="panel controls"><label>Gösterilen Grad-CAM aşaması<select id="stage"><option value="3" data-i18n>Aşama 3</option><option value="4" data-i18n>Aşama 4</option></select></label>
+<button id="cam" aria-pressed="false" disabled>Aşama 3 ve 4 karşılaştırması</button><button id="cnn-cam" data-i18n disabled>CNN Grad-CAM göster</button><button id="auto" disabled data-i18n>Otomatik SAM</button>
+<label class="fallback-option"><input type="checkbox" id="allow-fallback"><span data-i18n> Kutu bulunamazsa diğer aşamayı dene</span></label>
+<button id="intensity" disabled data-i18n>Kontrastla aday ara</button>
+<label>Grad-CAM görünürlüğü <output id="cam-level" for="cam-opacity">%75</output><input id="cam-opacity" type="range" min="0" max="100" value="75" disabled></label>
+<label>SAM maskesi görünürlüğü <output id="sam-level" for="sam-opacity">%68</output><input id="sam-opacity" type="range" min="0" max="100" value="68" disabled></label></div>
+<p class="muted" data-i18n>Grad-CAM, Swin kararına katkıda bulunan alanları yaklaşık olarak gösterir. Manuel SAM için orijinal MR üzerinde bir kutu çizin. Maskeler aday bölgeleri gösterir ve tümör sınırı doğrulaması yapılmamıştır.</p>
+<div class="grid four mr-panels">
+<article class="panel"><h3 data-i18n>Orijinal MR</h3><canvas width="224" height="224" id="drawing" tabindex="0" aria-describedby="manual-adjust-help" aria-label="MR görüntüsünde kutu çizme alanı"></canvas><button class="viewer-trigger" id="open-viewer" type="button" disabled data-i18n>Büyük karşılaştır</button><div class="manual-tools"><label for="prompt-mode">İşaretleme</label>
+<select id="prompt-mode"><option value="box" data-i18n>Kutu çiz</option><option value="1" data-i18n>Dahil et (+)</option><option value="0" data-i18n>Çıkar (−)</option></select>
+<button id="clear-points" type="button" data-i18n>Noktaları temizle</button>
+<button id="clear-box" type="button" data-i18n>Kutuyu temizle</button>
+<button id="manual" disabled data-i18n>Maskeyi üret</button></div><small id="manual-adjust-help">Ok tuşları kutuyu taşır. Shift + ok tuşu sağ veya alt kenarı ayarlar. Kutuyu çizdikten sonra bölge içine +, maske dışına çıkarmak istediğiniz alanlara − işareti koyun.</small></article>
+<article class="panel"><h3>Grad-CAM</h3><div class="grid cam-pair" id="cam-pair"><div id="cam-stage-3"><div class="frame"><img alt="" id="cam-base"><img alt="Grad-CAM aşama 3" id="cam-image"></div></div><div id="cam-stage-4" hidden><div class="frame"><img alt="" id="cam4-base"><img alt="Grad-CAM aşama 4" id="cam4-image"></div></div></div><div id="cnn-cam-panel" hidden><div class="frame"><img id="cnn-cam-base" alt=""><img id="cnn-cam-image" alt="CNN Grad-CAM"></div></div><p id="cam-status" role="status"></p><small>Parlak tonlar, bu aşamada sınıf kararına daha güçlü katkıyı gösterir. Her aşamada, yatay çevirmeli ve çevirmesiz girişlerin farklı yoğunluk ölçeklerinde hesaplanan Grad-CAM sonuçları ortalanır.</small><small id="stage3-explanation" data-i18n></small><p><small data-i18n>Seçilmiş örneklerde tek gözlemcili görsel incelemeye dayanır; referans maske ve isabet oranı yoktur.</small></p><details class="cam-technical"><summary data-i18n>Teknik ayrıntı</summary><small id="stage3-target" data-i18n></small></details></article>
+<article class="panel" id="sam-panel"><h3 data-i18n>Otomatik SAM</h3><div class="frame"><img alt="" id="auto-base"><canvas class="mask" width="224" height="224" id="auto-image" aria-hidden="true"></canvas><div id="auto-box" class="bounds" hidden></div></div><p id="auto-status" role="status"></p><button id="use-candidate" type="button" hidden data-i18n>Kutuyu manuel alana aktar</button></article>
+<article class="panel"><h3 data-i18n>Manuel SAM</h3><div class="frame"><img alt="" id="manual-base"><canvas class="mask" width="224" height="224" id="manual-image" aria-hidden="true"></canvas><div id="manual-box" class="bounds" hidden></div><p id="manual-empty" data-i18n>Kutu çizip 'Maskeyi üret'e basın.</p></div><p id="manual-status" role="status"></p></article>
+</div>
+<dialog id="mr-viewer" aria-labelledby="viewer-title">
+<form method="dialog"><button data-i18n>Kapat</button></form><h3 id="viewer-title" data-i18n>MR karşılaştırması</h3>
+<div class="controls viewer-controls">
+<button id="zoom-in" type="button" aria-label="Zoom in">+</button><button id="zoom-out" type="button" aria-label="Zoom out">−</button>
+<button id="zoom-reset" type="button" data-i18n>Sıfırla</button><button id="viewer-full" aria-pressed="false" type="button" data-i18n>Tam ekran</button>
+<label><span data-i18n>Katman görünürlüğü</span><input id="viewer-opacity" type="range" min="0" max="100" value="75"></label>
+<label><input id="viewer-sync" type="checkbox" checked> <span data-i18n>Eşzamanlı hareket</span></label>
+<button id="viewer-lens" type="button" aria-pressed="false" data-i18n>Büyüteç</button>
+<label><input id="viewer-split" type="checkbox"> <span data-i18n>Önce / sonra</span></label>
+<label><span data-i18n>Karşılaştırma çizgisi</span><input id="viewer-divider" type="range" min="0" max="100" value="50" disabled></label>
+<p id="viewer-status" role="status"></p></div>
+<div id="viewer-images" class="grid two"></div><p data-i18n>Paneli seçin. Yakınlaşınca ok tuşlarıyla kaydırın. Bölücü çizgiyi sürükleyin veya kaydırıcıyı ok tuşlarıyla kullanın.</p>
+</dialog>
+<details id="explanation-lab" class="panel">
+<summary data-i18n>Açıklamayı sına</summary>
+<h3 data-i18n>Modelin gördüğü</h3>
+<button id="lab-inputs" type="button" disabled data-i18n>Model girişlerini göster</button>
+<p id="lab-input-status" role="status"></p>
+<div id="lab-pipeline" class="lab-grid"></div>
+<h3 data-i18n>Müdahale deneyi</h3><p data-i18n>Tek görüntü üzerinde yapılan bir hipotez testidir; genel sonuç değildir.</p>
+<p data-i18n>Bu bir hipotez testidir. Dolgu, eğitim dışı bir görüntü yaratabilir; sonuç nedensellik kanıtı değildir.</p>
+<p data-i18n>MR üzerinde bir dikdörtgen sürükleyin. Klavyeyle kutu girmek için x1, y1, x2, y2 alanını kullanın.</p>
+<div class="lab-grid">
+<canvas id="lab-canvas" width="224" height="224" hidden></canvas>
+<img id="lab-altered" hidden width="224" height="224" alt="">
+</div>
+<div class="controls">
+<label><span data-i18n>Müdahale kutusu</span><input id="lab-box" maxlength="100" size="19" placeholder="x1,y1,x2,y2"></label>
+<label><span data-i18n>Dolgu</span><select id="lab-fill"><option value="gray" data-i18n>Ortalama gri</option><option value="gaussian" data-i18n>Gauss bulanıklaştırma</option></select></label>
+<button type="button" data-mode="box" disabled data-i18n>Gizle</button>
+<button type="button" data-mode="gradcam" disabled data-i18n>Grad-CAM'in en yüksek %10'luk bölgesini gizle</button>
+<button type="button" data-mode="random" disabled data-i18n>Aynı alanda rastgele bir bölgeyi gizle</button>
+</div>
+<p data-i18n>Rastgele kontrol, asıl müdahaleyle aynı sayıda pikseli sabit tohumla seçilen konumda gizler.</p>
+<p id="lab-result-status" role="status"></p><div id="lab-results"></div>
+</details>
+</section>
+<section id="literatur"><h2 data-i18n>Bilimsel Yayınlar</h2><div class="panel">
+<p class="muted">İlk arama, Swin tahmininden başlar. Bu yayınlar araştırma içindir ve tıbbi tavsiye değildir.</p><form id="research" class="controls"><label>Sınıf<select id="topic"><option value="glioma">Glioma</option><option value="meningioma">Meningioma</option><option value="notumor">Tümör yok / normal beyin MR</option><option value="pituitary">Hipofiz tümörü</option></select></label>
+<label>Ek anahtar sözcük<input type="search" id="query" maxlength="120" placeholder="Örn. segmentation"></label><label>Yayın aralığı<select id="years"><option value="0" data-i18n>Tüm yıllar</option><option value="1">Son 1 yıl</option><option value="5" data-i18n>Son 5 yıl</option><option value="10" data-i18n>Son 10 yıl</option></select></label><label>Sıralama<select id="sort"><option value="relevance" data-i18n>İlgililik</option><option value="pub_date" data-i18n>En yeni</option></select></label><button data-i18n>Ara</button></form>
+<p class="muted" data-i18n>Sonuçlar sınıf adı ve anahtar kelimeye göre otomatik getirilir; alaka değerlendirmesi kullanıcıya aittir.</p><p id="research-status" role="status"></p><ol id="articles"></ol>
 </div></section>
-<section id="yontem"><p class="eyebrow">GÖRSEL İNCELEME</p><h2>Grad-CAM ve SAM</h2><p>Grad-CAM, Swin-Tiny tahminine katkı veren bölgeleri gösterir. Bu haritadan türetilen kutu ya da manuel kutu SAM’e konum istemi olarak verilir.</p><figure class="panel wide"><img loading="lazy" src="/results/meningioma_otomatik_manuel_karsilastirma.png" alt="Meningioma notebook deneyinde otomatik ve manuel SAM maskeleri"><figcaption>Arşivden · Meningioma örneğinde otomatik ve manuel kutu karşılaştırması</figcaption></figure></section>
-<section id="hakkinda"><h2>Proje Hakkında</h2><p>Beyin MR görüntülerinde dört sınıfı karşılaştıran bir üniversite araştırma projesi. Canlı demo, yerel bilgisayardaki eğitilmiş ağırlıkları kullanır. Çıktılar araştırma amaçlıdır. SAM maskeleri uzman tarafından doğrulanmış tümör sınırları değildir.</p></section>
-</main><footer class="shell">NEURO AI LAB <a href="#ana">Yukarı dön ↑</a></footer></body></html>
+<section id="performans"><h2 data-i18n>Model Karşılaştırması</h2><p id="performance-status" role="status"></p><div id="comparison" class="grid two"></div><details class="panel session-history">
+<summary data-i18n>Model deney kayıtları</summary>
+<div class="metric-table"><table>
+<thead><tr><th scope="col" data-i18n>Model</th><th scope="col" data-i18n>Deney</th><th scope="col">Checkpoint</th><th scope="col" data-i18n>Doğruluk</th><th scope="col" data-i18n>Glioma duyarlılığı</th></tr></thead>
+<tbody>
+<tr><th scope="row">CNN</th><td data-i18n>İlk test · 1.600 görüntü</td><td><code>cnn_best.pth</code></td><td data-i18n>%76,75</td><td data-i18n>%55,00</td></tr>
+<tr><th scope="row">CNN</th><td data-i18n>Güncel test · 1.579 görüntü</td><td><code>cnn_v2_best.pth</code></td><td data-i18n>%89,61</td><td data-i18n>%80,94</td></tr>
+<tr><th scope="row">Swin-Tiny</th><td data-i18n>İlk V3</td><td><code>swin_tiny_v3_best.pth</code></td><td data-i18n>%93,86</td><td data-i18n>%82,77</td></tr>
+<tr><th scope="row">Swin-Tiny</th><td data-i18n>Önceki ek eğitim</td><td>Önceki çalışmanın ağırlığı, dosya kimliği doğrulanmadı</td><td data-i18n>%94,11</td><td data-i18n>%81,98</td></tr>
+<tr><th scope="row">Swin-Tiny</th><td data-i18n>Colab T4</td><td>Colab çalışmasının dışa aktardığı <code>swin_tiny_v3_finetuned_best.pth</code></td><td data-i18n>%93,98</td><td data-i18n>%81,72</td></tr>
+<tr><th scope="row">Swin-Tiny</th><td data-i18n>Yerel RTX 3050 ince ayar</td><td>Yereldeki <code>swin_tiny_v3_finetuned_best.pth</code></td><td data-i18n>%94,05</td><td data-i18n>%81,98</td></tr>
+</tbody></table></div>
+</details><p><a href="/results/cnn_v2_web_training.png" target="_blank" rel="noopener">CNN eğitim grafiği</a> · <a href="/results/swin_v3/finetuning/local_run/training_curves.png" target="_blank" rel="noopener">Swin-Tiny yerel ince ayar eğitim grafiği</a></p></section>
+<section id="rapor"><h2 data-i18n>Raporlar</h2><div class="panel controls"><p data-i18n>Model tahminleri, oluşturulan görseller ve seçilen aramanın PubMed sonuçları tek raporda.</p><label class="fallback-option"><input type="checkbox" id="pdf-images" checked><span data-i18n> MR ve işlenmiş görselleri ekle</span></label><button id="pdf" data-i18n disabled>PDF indir</button><p id="pdf-status" role="status"></p></div><details class="panel session-history"><summary data-i18n>Oturum geçmişi</summary>
+<p data-i18n>Bellekte yalnızca zaman ve sınıf sonuçları tutulur. Sayfayı yenilemek listeyi temizler.</p><ol id="history"></ol>
+<button id="clear-history" type="button" data-i18n>Geçmişi temizle</button></details></section>
+<section id="deneyler"><h2 data-i18n>Deney Grafikleri</h2>
+<div class="panel controls"><label><span data-i18n>Kategori</span><select id="gallery-filter"><option value="cnn">CNN</option><option value="swin">Swin Transformer</option><option value="cam">Grad-CAM</option><option value="sam">SAM</option></select></label>
+<label><span data-i18n>Grafik</span><select id="figure-select"></select></label><button id="figure-open" data-i18n>Büyük önizleme</button><a id="figure-download" class="button" download data-i18n>İndir</a></div>
+<p id="figure-description"></p><div class="figure-preview"><p id="figure-state" role="status"></p><img id="figure-preview" alt="" hidden></div></section>
+<footer>NEURO AI LAB</footer>
+</main></body></html>

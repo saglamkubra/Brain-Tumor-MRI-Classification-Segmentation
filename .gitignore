@@ -219,10 +219,25 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-
-# Local model weights, archives and raw MR samples
 /models/
+
+# Keep model weights and raw training archives local
 *.pth
 *.pt
 *.zip
+
+# Raw MR samples generated for the local demo
 /frontend/gallery/*-original.jpg
+work_antigravity/tests/data/
+
+# Local workspace backups and unpacked MRI data
+/backups/
+/.backups/
+/yedek/
+/Training/
+/Testing/
+/dataset/
+/Brain_Tumor_MRI_Dataset/
+
+# Yerel çalışma kopyaları
+/work_antigravity/

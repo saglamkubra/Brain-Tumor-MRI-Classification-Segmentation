@@ -38,6 +38,7 @@ def main():
     parser.add_argument("dataset")
     parser.add_argument("--root", default="http://127.0.0.1:8000")
     parser.add_argument("--device", default="cuda", choices=["cuda", "cpu"])
+    parser.add_argument('--pubmed', action='store_true', help='Check the live PubMed service (internet required).')
     args = parser.parse_args()
 
     def request(route, *params, **kwargs):
@@ -48,20 +49,34 @@ def main():
         healthy = archive.read(next(path for path in archive.namelist()
                                     if path.startswith("Testing/notumor/") and path.endswith(".jpg")))
     assert b'/assets/app.js' in request("/")
-    assert b'showVisuals' in request("/assets/app.js")
+    assert b'camResult' in request("/assets/app.js")
     assert request("/results/swin_confusion_matrix.png").startswith(b"\x89PNG")
     health = request("/health")
     assert health["device"] == args.device, health
-    assert len(health["models"]) == 4 and all(model["loaded"] for model in health["models"]), health
+    assert len(health["models"]) == 3 and all(model["loaded"] for model in health["models"]), health
     predictions = request("/predict", sample)
     assert predictions["classes"] == CLASSES and not predictions["errors"], predictions
-    assert len(predictions["predictions"]) == 3
+    assert len(predictions["predictions"]) == 2
     image_result(predictions["preview"])
     for prediction in predictions["predictions"]:
         assert prediction["class"] == "meningioma" and prediction["device"] == args.device, prediction
         assert list(prediction["probabilities"]) == CLASSES
         assert abs(sum(prediction["probabilities"].values()) - 1) < 1e-6
     print("PREDICT", predictions["predictions"])
+    cams = [request(f"/explain?stage={stage}", sample)["overlay"] for stage in (3, 4)]
+    assert cams[0] != cams[1]
+    for cam in cams:
+        image_result(cam)
+
+    cnn_cam = request("/explain?model=cnn", sample)
+    cnn = next(item for item in predictions["predictions"] if item["model"] == "CNN")
+    assert cnn_cam["model"] == "CNN" and cnn_cam["stage"] is None
+    assert cnn_cam["classification"] == cnn["class"]
+    assert image_result(cnn_cam["gradcam_layer"]).mode == "RGBA"
+    request("/explain?model=unknown", sample, expected=422)
+    for image in ("/results/CNN_V2%20sonu%C3%A7lar/07_confusion_matrix.png",
+                  "/results/swin_v3/swin_sam_grafikleri/10_sam_ve_gradcam_dort_sinif.png"):
+        assert request(image).startswith(b"\x89PNG")
 
     for route in ["/segment?mode=auto", "/segment?mode=manual&box=115,85,160,135"]:
         result = request(route, sample)
@@ -80,7 +95,7 @@ def main():
     image_result(skipped["gradcam"])
     png_input = BytesIO()
     Image.open(BytesIO(sample)).save(png_input, format="PNG")
-    assert len(request("/predict", png_input.getvalue(), "image/png")["predictions"]) == 3
+    assert len(request("/predict", png_input.getvalue(), "image/png")["predictions"]) == 2
     request("/segment?mode=manual&box=2,2,1,1", sample, expected=422)
     request("/predict", sample, "image/png", expected=415)
     request("/predict", b"bozuk", expected=422)
@@ -88,6 +103,25 @@ def main():
     oversized = BytesIO()
     Image.new("RGB", (4097, 1)).save(oversized, format="PNG")
     request("/predict", oversized.getvalue(), "image/png", expected=413)
+    references = []
+    if args.pubmed:
+        articles = request("/research?label=glioma&years=5&sort=relevance")["articles"]
+        assert articles and all(row["id"].isdigit() for row in articles)
+        for article in articles[:4]:
+            sections = request(f'/research/{article["id"]}')["sections"]
+            if sections:
+                references = [article]
+                break
+        assert references, "PubMed returned no abstracts for the first four articles."
+        print("PubMed and abstract", references[0]["id"])
+
+    for include_images in (False, True):
+        visuals = {"original": {"image": predictions["preview"]},
+                   "cnn_cam": {"image": cnn_cam["overlay"]}} if include_images else {}
+        payload = json.dumps({"analysis": predictions, "visuals": visuals, "references": references}).encode("utf8")
+        pdf = request("/report", payload, "application/json")
+        assert pdf.startswith(b"%PDF") and (b"/Subtype /Image" in pdf) == include_images
+    print("PDF, with and without images, passed.")
     print("PNG, notumor skip and upload / box validation passed.")
 
 
