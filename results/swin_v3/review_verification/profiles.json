@@ -1,0 +1,72 @@
+{
+  "legacy": {
+    "health": "hazır",
+    "checkpoint": "swin_tiny_best.pth",
+    "sample_class": "meningioma",
+    "stages": [
+      3,
+      4
+    ],
+    "auto": {
+      "status": "kutu_yok",
+      "box_source": null,
+      "box": null,
+      "pixels": null
+    },
+    "manual_pixels": 745,
+    "Te-gl_1": {
+      "CNN": "notumor",
+      "Swin-Tiny": "meningioma"
+    }
+  },
+  "v3": {
+    "health": "hazır",
+    "checkpoint": "swin_tiny_v3_best.pth",
+    "sample_class": "meningioma",
+    "stages": [
+      3,
+      4
+    ],
+    "auto": {
+      "status": "hazır",
+      "box_source": "gradcam_selected",
+      "box": [
+        107,
+        72,
+        152,
+        119
+      ],
+      "pixels": 748
+    },
+    "manual_pixels": 745,
+    "Te-gl_1": {
+      "CNN": "notumor",
+      "Swin-Tiny": "notumor"
+    }
+  },
+  "v3-finetuned": {
+    "health": "hazır",
+    "checkpoint": "swin_tiny_v3_finetuned_best.pth",
+    "sample_class": "meningioma",
+    "stages": [
+      3,
+      4
+    ],
+    "auto": {
+      "status": "hazır",
+      "box_source": "gradcam_selected",
+      "box": [
+        94,
+        34,
+        203,
+        105
+      ],
+      "pixels": 4396
+    },
+    "manual_pixels": 745,
+    "Te-gl_1": {
+      "CNN": "notumor",
+      "Swin-Tiny": "notumor"
+    }
+  }
+}

@@ -1,0 +1,254 @@
+{
+  "baseline": "46847fad8dcd0d97b4f09fa7178c96ea5fce99ce",
+  "device": "cuda",
+  "cases": [
+    {
+      "image": "Te-gl_22.jpg",
+      "dataset_label": "glioma",
+      "predictions": {
+        "CNN": "glioma",
+        "Swin-Tiny": "glioma"
+      },
+      "old": {
+        "status": "hazır",
+        "box": [
+          26,
+          22,
+          159,
+          202
+        ],
+        "box_reason": null,
+        "box_source": "gradcam_stage_3",
+        "box_stages": null,
+        "pixels": 21723,
+        "elapsed_s": 1.461
+      },
+      "current": {
+        "status": "hazır",
+        "box": [
+          63,
+          92,
+          97,
+          136
+        ],
+        "box_reason": "Aşama 3: önerilen kutu ön plana göre çok geniş.",
+        "box_source": "gradcam_agreement",
+        "box_stages": [
+          3,
+          4
+        ],
+        "pixels": 1450,
+        "elapsed_s": 1.865
+      }
+    },
+    {
+      "image": "Te-aug-me_7.jpg",
+      "dataset_label": "meningioma",
+      "predictions": {
+        "CNN": "meningioma",
+        "Swin-Tiny": "meningioma"
+      },
+      "old": {
+        "status": "hazır",
+        "box": [
+          44,
+          41,
+          178,
+          192
+        ],
+        "box_reason": null,
+        "box_source": "gradcam_stage_3",
+        "box_stages": null,
+        "pixels": 16967,
+        "elapsed_s": 0.902
+      },
+      "current": {
+        "status": "hazır",
+        "box": [
+          119,
+          73,
+          170,
+          140
+        ],
+        "box_reason": null,
+        "box_source": "gradcam_selected",
+        "box_stages": [
+          3
+        ],
+        "pixels": 1059,
+        "elapsed_s": 1.203
+      }
+    },
+    {
+      "image": "Te-gl_1.jpg",
+      "dataset_label": "glioma",
+      "predictions": {
+        "CNN": "notumor",
+        "Swin-Tiny": "notumor"
+      },
+      "old": {
+        "status": "atlandı",
+        "box": null,
+        "box_reason": null,
+        "box_source": null,
+        "box_stages": null,
+        "pixels": null,
+        "elapsed_s": 0.158
+      },
+      "current": {
+        "status": "atlandı",
+        "box": null,
+        "box_reason": null,
+        "box_source": null,
+        "box_stages": null,
+        "pixels": null,
+        "elapsed_s": 0.421
+      }
+    },
+    {
+      "image": "Te-me_263.jpg",
+      "dataset_label": "meningioma",
+      "predictions": {
+        "CNN": "meningioma",
+        "Swin-Tiny": "meningioma"
+      },
+      "old": {
+        "status": "hazır",
+        "box": [
+          28,
+          35,
+          152,
+          199
+        ],
+        "box_reason": null,
+        "box_source": "gradcam_stage_3",
+        "box_stages": null,
+        "pixels": 17781,
+        "elapsed_s": 0.932
+      },
+      "current": {
+        "status": "hazır",
+        "box": [
+          107,
+          72,
+          152,
+          119
+        ],
+        "box_reason": null,
+        "box_source": "gradcam_selected",
+        "box_stages": [
+          3
+        ],
+        "pixels": 735,
+        "elapsed_s": 1.12
+      }
+    },
+    {
+      "image": "Te-pi_1.jpg",
+      "dataset_label": "pituitary",
+      "predictions": {
+        "CNN": "pituitary",
+        "Swin-Tiny": "pituitary"
+      },
+      "old": {
+        "status": "hazır",
+        "box": [
+          25,
+          38,
+          199,
+          183
+        ],
+        "box_reason": null,
+        "box_source": "gradcam_stage_3",
+        "box_stages": null,
+        "pixels": 19767,
+        "elapsed_s": 0.873
+      },
+      "current": {
+        "status": "hazır",
+        "box": [
+          15,
+          88,
+          92,
+          186
+        ],
+        "box_reason": "Aşama 3: aktivasyonlar birbirinden yeterince ayrışmadı.",
+        "box_source": "gradcam_other_stage",
+        "box_stages": [
+          4
+        ],
+        "pixels": 3860,
+        "elapsed_s": 1.745
+      }
+    },
+    {
+      "image": "Te-no_1.jpg",
+      "dataset_label": "notumor",
+      "predictions": {
+        "CNN": "notumor",
+        "Swin-Tiny": "notumor"
+      },
+      "old": {
+        "status": "atlandı",
+        "box": null,
+        "box_reason": null,
+        "box_source": null,
+        "box_stages": null,
+        "pixels": null,
+        "elapsed_s": 0.18
+      },
+      "current": {
+        "status": "atlandı",
+        "box": null,
+        "box_reason": null,
+        "box_source": null,
+        "box_stages": null,
+        "pixels": null,
+        "elapsed_s": 0.492
+      }
+    }
+  ],
+  "checkpoints_sha256": {
+    "CNN": "ae6501b19f70a1479374d9111cc954a76a2e1fa77a6863ddf159c3b03bf1fa98",
+    "Swin-Tiny": "8f0f9f82197dcd984e937fcb71a469fa37c8914412173c3c63f0d3348e1d2558",
+    "SAM ViT-B": "ec2df62732614e57411cdcf32a23ffdf28910380d03139ee0f4fcbe91eb8c912"
+  },
+  "hooks": {
+    "3": {
+      "activation_shape": [
+        1,
+        14,
+        14,
+        384
+      ],
+      "gradient_shape": [
+        1,
+        14,
+        14,
+        384
+      ],
+      "hook_cleanup": true,
+      "stable_repeat": true
+    },
+    "4": {
+      "activation_shape": [
+        1,
+        7,
+        7,
+        768
+      ],
+      "gradient_shape": [
+        1,
+        7,
+        7,
+        768
+      ],
+      "hook_cleanup": true,
+      "stable_repeat": true
+    }
+  },
+  "fallback_off": {
+    "status": "kutu_yok",
+    "reason": "Aşama 3: önerilen kutu ön plana göre çok geniş."
+  }
+}

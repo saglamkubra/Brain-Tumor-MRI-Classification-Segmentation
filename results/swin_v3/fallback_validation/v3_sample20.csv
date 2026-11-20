@@ -1,0 +1,21 @@
+﻿class,image,prediction,old_status,old_source,old_box,old_pixels,new_status,new_source,new_box,new_pixels
+glioma,Te-gl_332.jpg,glioma,hazır,gradcam_other_stage,"[93, 190, 131, 223]",1099,kutu_yok,,,
+glioma,Te-gl_82.jpg,glioma,hazır,gradcam_selected,"[76, 38, 136, 86]",2670,hazır,gradcam_selected,"[76, 38, 136, 86]",2670
+glioma,Te-gl_35.jpg,glioma,hazır,gradcam_selected,"[72, 22, 165, 80]",4132,hazır,gradcam_selected,"[72, 22, 165, 80]",4132
+glioma,Te-gl_87.jpg,meningioma,hazır,gradcam_selected,"[105, 57, 131, 84]",263,hazır,gradcam_selected,"[105, 57, 131, 84]",263
+glioma,Te-gl_397.jpg,glioma,hazır,gradcam_selected,"[140, 44, 163, 69]",523,hazır,gradcam_selected,"[140, 44, 163, 69]",523
+meningioma,Te-me_106.jpg,meningioma,hazır,gradcam_selected,"[44, 42, 118, 109]",1876,hazır,gradcam_selected,"[44, 42, 118, 109]",1876
+meningioma,Te-aug-me_15.jpg,meningioma,hazır,gradcam_selected,"[118, 65, 164, 102]",1334,hazır,gradcam_selected,"[118, 65, 164, 102]",1334
+meningioma,Te-me_124.jpg,meningioma,hazır,gradcam_selected,"[73, 56, 115, 101]",926,hazır,gradcam_selected,"[73, 56, 115, 101]",926
+meningioma,Te-me_270.jpg,meningioma,hazır,gradcam_selected,"[101, 37, 138, 73]",630,hazır,gradcam_selected,"[101, 37, 138, 73]",630
+meningioma,Te-me_62.jpg,meningioma,hazır,gradcam_selected,"[65, 76, 102, 115]",331,hazır,gradcam_selected,"[65, 76, 102, 115]",331
+notumor,Te-no_304.jpg,notumor,atlandı,,,,atlandı,,,
+notumor,Te-no_267.jpg,notumor,atlandı,,,,atlandı,,,
+notumor,Te-no_125.jpg,notumor,atlandı,,,,atlandı,,,
+notumor,Te-no_226.jpg,notumor,atlandı,,,,atlandı,,,
+notumor,Te-no_380.jpg,notumor,atlandı,,,,atlandı,,,
+pituitary,Te-pi_122.jpg,pituitary,hazır,gradcam_agreement,"[27, 80, 105, 169]",4891,hazır,gradcam_agreement,"[27, 80, 105, 169]",4891
+pituitary,Te-pi_52.jpg,pituitary,hazır,gradcam_selected,"[118, 78, 178, 138]",2928,hazır,gradcam_selected,"[118, 78, 178, 138]",2928
+pituitary,Te-pi_46.jpg,pituitary,hazır,gradcam_selected,"[21, 75, 122, 174]",7550,hazır,gradcam_selected,"[21, 75, 122, 174]",7550
+pituitary,Te-pi_184.jpg,pituitary,hazır,gradcam_selected,"[27, 27, 128, 114]",6715,hazır,gradcam_selected,"[27, 27, 128, 114]",6715
+pituitary,Te-pi_73.jpg,pituitary,hazır,gradcam_agreement,"[157, 47, 196, 112]",1251,hazır,gradcam_agreement,"[157, 47, 196, 112]",1251

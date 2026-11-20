@@ -1,0 +1,39 @@
+﻿image,truth,prediction,target,status,box,sam_pixels,center_y_over_224
+Te-gl_22.jpg,glioma,glioma,stage_output,kutu_yok,,,
+Te-gl_22.jpg,glioma,glioma,block_norm1,kutu_yok,,,
+Te-aug-me_7.jpg,meningioma,meningioma,stage_output,hazır,"[119, 73, 170, 140]",1062,0.47544642857142855
+Te-aug-me_7.jpg,meningioma,meningioma,block_norm1,kutu_yok,,,
+Te-gl_1.jpg,glioma,notumor,stage_output,atlandı,,,
+Te-gl_1.jpg,glioma,notumor,block_norm1,atlandı,,,
+Te-me_263.jpg,meningioma,meningioma,stage_output,hazır,"[107, 72, 152, 119]",748,0.4263392857142857
+Te-me_263.jpg,meningioma,meningioma,block_norm1,hazır,"[53, 137, 85, 164]",783,0.671875
+Te-pi_1.jpg,pituitary,pituitary,stage_output,kutu_yok,,,
+Te-pi_1.jpg,pituitary,pituitary,block_norm1,hazır,"[16, 110, 71, 213]",869,0.7209821428571429
+Te-gl_82.jpg,glioma,glioma,stage_output,hazır,"[76, 38, 136, 86]",2670,0.2767857142857143
+Te-gl_82.jpg,glioma,glioma,block_norm1,hazır,"[106, 44, 131, 83]",975,0.28348214285714285
+Te-gl_35.jpg,glioma,glioma,stage_output,hazır,"[72, 22, 165, 80]",4132,0.22767857142857142
+Te-gl_35.jpg,glioma,glioma,block_norm1,hazır,"[82, 29, 166, 83]",3600,0.25
+Te-gl_87.jpg,glioma,meningioma,stage_output,hazır,"[105, 57, 131, 84]",263,0.31473214285714285
+Te-gl_87.jpg,glioma,meningioma,block_norm1,hazır,"[68, 72, 119, 138]",2612,0.46875
+Te-gl_397.jpg,glioma,glioma,stage_output,hazır,"[140, 44, 163, 69]",523,0.25223214285714285
+Te-gl_397.jpg,glioma,glioma,block_norm1,maske_yok,"[172, 122, 192, 146]",,0.5982142857142857
+Te-me_106.jpg,meningioma,meningioma,stage_output,hazır,"[44, 42, 118, 109]",1876,0.33705357142857145
+Te-me_106.jpg,meningioma,meningioma,block_norm1,hazır,"[145, 65, 179, 99]",1000,0.36607142857142855
+Te-aug-me_15.jpg,meningioma,meningioma,stage_output,hazır,"[118, 65, 164, 102]",1334,0.37276785714285715
+Te-aug-me_15.jpg,meningioma,meningioma,block_norm1,hazır,"[165, 112, 216, 206]",2710,0.7098214285714286
+Te-me_124.jpg,meningioma,meningioma,stage_output,hazır,"[73, 56, 115, 101]",926,0.35044642857142855
+Te-me_124.jpg,meningioma,meningioma,block_norm1,hazır,"[75, 55, 115, 99]",850,0.34375
+Te-me_270.jpg,meningioma,meningioma,stage_output,hazır,"[101, 37, 138, 73]",630,0.24553571428571427
+Te-me_270.jpg,meningioma,meningioma,block_norm1,hazır,"[65, 156, 104, 218]",382,0.8348214285714286
+Te-me_62.jpg,meningioma,meningioma,stage_output,hazır,"[65, 76, 102, 115]",331,0.4263392857142857
+Te-me_62.jpg,meningioma,meningioma,block_norm1,hazır,"[160, 184, 182, 206]",270,0.8705357142857143
+Te-pi_122.jpg,pituitary,pituitary,stage_output,kutu_yok,,,
+Te-pi_122.jpg,pituitary,pituitary,block_norm1,hazır,"[90, 0, 135, 40]",230,0.08928571428571429
+Te-pi_52.jpg,pituitary,pituitary,stage_output,hazır,"[118, 78, 178, 138]",2928,0.48214285714285715
+Te-pi_52.jpg,pituitary,pituitary,block_norm1,hazır,"[118, 168, 207, 223]",4452,0.8727678571428571
+Te-pi_46.jpg,pituitary,pituitary,stage_output,hazır,"[21, 75, 122, 174]",7550,0.5558035714285714
+Te-pi_46.jpg,pituitary,pituitary,block_norm1,kutu_yok,,,
+Te-pi_184.jpg,pituitary,pituitary,stage_output,hazır,"[27, 27, 128, 114]",6715,0.31473214285714285
+Te-pi_184.jpg,pituitary,pituitary,block_norm1,kutu_yok,,,
+Te-pi_73.jpg,pituitary,pituitary,stage_output,kutu_yok,,,
+Te-pi_73.jpg,pituitary,pituitary,block_norm1,hazır,"[30, 34, 80, 83]",1051,0.2611607142857143

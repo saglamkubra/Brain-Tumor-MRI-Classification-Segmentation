@@ -10,7 +10,7 @@
 ![Backend](https://img.shields.io/badge/Backend-FastAPI-009688?style=flat-square)
 ![Research](https://img.shields.io/badge/Kullanım-Akademik%20Araştırma-6D5DFB?style=flat-square)
 
-[Proje](#1-projenin-amacı) · [Modeller](#4-kullanılan-modeller) · [Sonuçlar](#5-model-performansları) · [Grafikler](#6-deney-görselleri) · [Kurulum](#9-kurulum-ve-çalıştırma) · [Google Drive](#11-google-drive-ve-model-dosyaları)
+[Görüntü işleme](#görüntü-işleme-hattı) · [Proje](#1-projenin-amacı) · [Modeller](#4-kullanılan-modeller) · [Sonuçlar](#5-model-performansları) · [Grafikler](#6-deney-görselleri) · [Kurulum](#9-kurulum-ve-çalıştırma) · [Google Drive](#11-google-drive-ve-model-dosyaları)
 
 </div>
 
@@ -20,11 +20,25 @@
 ## Hızlı başlangıç
 
 - **Yerel uygulama (Windows):** Uygun Python ortamı ve model checkpoint'leri hazırsa `start.bat` dosyasını çalıştırın. Ayrıntılar için [kurulum](#9-kurulum-ve-çalıştırma) bölümüne bakın.
-- **CNN:** [CNN sonuçları](#51-cnn-sınıflandırma-sonuçları), [CNN eğitim ve değerlendirme görselleri](#61-cnn-analiz-galerisi) ve modelin [Python kullanımı](#95-cnn-python-çıkarımı).
+- **CNN:** [CNN sonuçları](#51-cnn-sınıflandırma-sonuçları), [CNN eğitim ve değerlendirme görselleri](#61-cnn--seçilmiş-analiz-görselleri) ve modelin [Python kullanımı](#95-cnn-python-çıkarımı).
 - **Swin Transformer eğitim/deneyleri:** [Colab notebook'u](https://colab.research.google.com/github/saglamkubra/Brain-Tumor-MRI-Classification-Segmentation/blob/main/notebooks/Swin_Tiny_V3_FineTuning_Colab.ipynb) ve [deney klasörü](experiments/swin_v3/).
 - **Grad-CAM ve SAM:** Model açıklama haritaları ile otomatik ve manuel segmentasyon deneyleri [görsel analizler](#6-deney-görselleri) bölümünde sunulmuştur.
 - **Veri seti:** [Brain Tumor MRI Dataset — Kaggle](https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset).
 - **Model ağırlıkları ve araştırma materyalleri:** [Google Drive klasörü](https://drive.google.com/drive/folders/1aOvUcdAECIrp_yA3w9OtNYRz5jaUeej0?usp=drive_link).
+
+## Görüntü işleme hattı
+
+| Adım | Uygulanan yöntem | Kod ve deney |
+| --- | --- | --- |
+| Veri hazırlığı | Görüntü tekrarları ve benzerlik kontrolü, sınıf dağılımı ve veri bölme | [Veri hazırlama notebook’u](Data_Preprocessing/01_Data_Preprocessing.ipynb) · [Veri sızıntısı denetimi](DATA_LEAKAGE_AUDIT.md) |
+| Model girişleri | 224 × 224 boyutlandırma, CNN için gri ton ve paket normalizasyonu, Swin için RGB ve ImageNet normalizasyonu | [Ön işleme ve model yükleme](backend/models.py) · [CNN V2](notebooks/CNN_V2.ipynb) |
+| MR önizlemesi | En-boy oranını koruyan ölçekleme ve dolgu, önizleme ile özgün koordinatlar arasında kutu dönüşümü | [Önizleme geometrisi ve SAM](backend/segmentation.py) |
+| Kontrastla aday bölge | Gri ton dönüşümü, Gauss bulanıklaştırma, morfolojik kapama ve erozyon, bağlı bileşen analizi | [Kontrastla kutu üretimi](backend/lesion_candidate.py) |
+| Grad-CAM | Hedef sınıf logitinin gradyanıyla aktivasyon kanallarını ağırlıklandırma, pozitif haritayı ölçekleme ve değişken görünümlerle yumuşatma | [Swin ve SAM notebook’u](notebooks/Swin_Transformer_SAM.ipynb) · [Aşama 3 katman karşılaştırması](results/gradcam_diagnostics/summary_asama3.md) |
+| SAM ViT-B | Grad-CAM’den veya manuel kutudan maske adayları, kutu ve maskenin aynı önizlemeye geri izdüşümü | [Otomatik ve manuel SAM örnekleri](results/swin_v3/swin_sam_grafikleri/11_sam_otomatik_manuel_kutu.png) |
+| Bölge müdahalesi | Ortalama gri veya Gauss dolgusu ve aynı alanlı, sabit tohumlu rastgele kontrol. CNN ve Swin yeniden çalıştırılarak skor ve logit marjı karşılaştırılır | [Müdahale kodu](backend/explanation_lab.py) · [Güncel arayüz raporu](results/NEURO_AI_LAB_7_duzeltme_raporu.pdf) |
+
+Aşama 3 varsayılanı `layers[2]`. Notebook grafikleri son bloğun `norm1` çıkışını kullanır. Uygulamadaki varsayılan seçimi, seçilmiş örneklerde tek gözlemcili görsel incelemeye dayanır. Referans maske ve anatomik isabet oranı yoktur. [Görsel karşılaştırma](results/gradcam_diagnostics/stage3_gorsel_karsilastirma/ozet.md)
 
 ## 1. Projenin amacı
 
@@ -70,7 +84,7 @@ Veri kaynağı: [Brain Tumor MRI Dataset — Kaggle](https://www.kaggle.com/data
 |---|---|---|
 | Giriş biçimi | Gri tonlamalı | RGB |
 | Görüntü boyutu | 224 × 224 | 224 × 224 |
-| Normalizasyon | Eğitimde kullanılan 0.5 ortalama / 0.5 std | ImageNet mean / std |
+| Normalizasyon | CNN V2 dağıtım paketindeki ortalama ve standart sapma | ImageNet ortalama ve standart sapması |
 | Sınıf sayısı | 4 | 4 |
 
 Swin Transformer için ImageNet normalizasyonu:
@@ -331,30 +345,25 @@ CNN dağıtımına özel test edilmiş paket sürümleri `deployment_config.json
 
 ### 9.3 Checkpoint dosyaları
 
-Model ağırlıklarını uygulamanın beklediği `models/` klasörüne yerleştirin. Eski uygulama sürümlerindeki dosya adları ile yeni checkpoint adları farklı olabilir; gerçek yükleme yollarını `backend/` kodundan doğrulayın.
+[Drive klasöründen](#11-google-drive-ve-model-dosyaları) edinilen model dosyalarını yerel `models/` klasörüne yerleştirin.
 
-Örnek mevcut Swin ağırlık adları:
+| Model | Yerel dosyalar |
+| --- | --- |
+| CNN V2 | `models/CNN_V2/` altında `cnn_v2_best.pth`, `deployment_config.json`, `cnn_v2_architecture.py` ve `inference.py` |
+| Swin-Tiny | `models/swin_tiny_v3_best.pth` |
+| SAM ViT-B | `models/sam_vit_b_01ec64.pth` |
 
-```text
-swin_tiny_v3_best.pth
-swin_tiny_v3_finetuned_best.pth
-```
-
-CNN ve SAM checkpoint dosyalarının gerçek adları dağıtım paketinden ve backend yapılandırmasından doğrulanmalıdır.
-
-**Model ağırlıklarını ve ham MR veri setini GitHub'a yüklemeyin.**
+CNN paketi yüklenirken SHA-256 ve model yapılandırması kontrol edilir. Ağırlıklar ve ham MR verileri yerelde tutulur.
 
 ### 9.4 Yerel web uygulaması
 
-Windows ortamında, gerekli checkpoint'ler ve bağımlılıklar hazırsa:
-
 ```powershell
-.\start.bat
+.\start.bat --port 8011
 ```
 
-Önceki uygulama sürümünün yerel adresi: <http://127.0.0.1:8000/>.
+[Uygulama](http://127.0.0.1:8011/) ve [model durumu](http://127.0.0.1:8011/health) aynı bilgisayardan açılır. CUDA varsa GPU, aksi halde CPU kullanılır.
 
-Mevcut backend ve `start.bat` dosyalarının **CNN + Swin + SAM** düzenine göre güncellenmiş olması gerekir. Bu entegrasyon doğrulanmadan uygulamanın eksiksiz çalıştığı varsayılmamalıdır.
+Notebook katmanını denemek için aynı PowerShell oturumunda `$env:NEURO_SWIN_STAGE3_TARGET='block_norm1'` ayarlayıp sunucuyu yeniden başlatın. Varsayılan aşama çıkışına dönmek için `Remove-Item Env:NEURO_SWIN_STAGE3_TARGET -ErrorAction SilentlyContinue` çalıştırıp yeniden başlatın.
 
 ### 9.5 CNN Python çıkarımı
 
@@ -367,32 +376,19 @@ result = predict_image("example.jpg")
 print(result)
 ```
 
-## 10. Web uygulaması ve hedeflenen özellikler
+## 10. Web uygulaması ve doğrulama
 
-Projenin web arayüzü aşağıdaki modülleri bir araya getirmeyi hedeflemektedir:
+Arayüz CNN ve Swin tahminlerini, Grad-CAM ve otomatik veya manuel SAM görsellerini, gerçek deney metriklerini ve grafiklerini gösterir. Eşzamanlı görüntüleyici aynı önizleme koordinatlarında katman karşılaştırması yapar. Açıklamayı sına bölümü gerçek model girişlerini ve bölge müdahalelerini gösterir. PubMed’e sınıf ve arama terimi gönderilir. PDF raporu analiz sonuçlarını ve seçilen görselleri içerir.
 
-| Modül | İşlev |
-|---|---|
-| MR Analizi | Yüklenen görüntü için CNN ve Swin tahminleri |
-| Model Karşılaştırma | Sınıf skorları ve iki modelin sonuçları |
-| Açıklanabilir AI | Swin Grad-CAM görselleri |
-| SAM Segmentasyon | Otomatik ve manuel kutu ile maske |
-| Performans Paneli | Gerçek deney grafikleri ve metrikler |
-| Akademik Kaynaklar | Tahmin edilen sınıfla ilgili PubMed makaleleri (planlanan) |
-| Analiz Raporu | Görsel ve sonuçlardan PDF raporu (planlanan) |
+| Uç nokta | İşlev |
+| --- | --- |
+| `GET /health` | Yüklenen modeller, cihaz ve aktif Swin hedefi |
+| `POST /predict` | CNN ve Swin sınıf skorları |
+| `POST /explain` · `POST /segment` | Grad-CAM ve kutu istemli SAM |
+| `POST /model-inputs` · `POST /intervene` | Gerçek model girişleri ve müdahale sonucu |
+| `GET /performance` · `GET /research` · `POST /report` | Kayıtlı test metrikleri, gerçek PubMed kayıtları ve PDF |
 
-**Durum notu:** Tablo, önceki uygulamada bulunan araştırma işlevlerini ve geliştirilmesi planlanan özellikleri birlikte listeler. PubMed entegrasyonu ve PDF raporu bu README hazırlanırken çalışır durumda doğrulanmamıştır. Sınıflandırma ve segmentasyonun güncel backend'deki çalışma durumu da uygulama testleriyle doğrulanmalıdır.
-
-### Önceki yerel API uç noktaları
-
-| Uç nokta | Açıklama |
-|---|---|
-| `GET /health` | Model ve cihaz durumu |
-| `POST /predict` | Sınıflandırma çıktıları |
-| `POST /segment?mode=auto` | Otomatik konumlandırma ve segmentasyon |
-| `POST /segment?mode=manual` | Kullanıcının seçtiği kutu ile segmentasyon |
-
-Bunlar önceki uygulama sürümünde belgelenen adreslerdir; güncel API'de kontrol edilmelidir.
+[Test raporu](WEB_TEST_REPORT.md) · [Gerçek MR ile ekranlar](results/NEURO_AI_LAB_uygulama_ekranlari.pdf) · [Son doğrulama ve önce/sonra görselleri](results/NEURO_AI_LAB_7_duzeltme_raporu.pdf)
 
 ## 11. Google Drive ve model dosyaları
 

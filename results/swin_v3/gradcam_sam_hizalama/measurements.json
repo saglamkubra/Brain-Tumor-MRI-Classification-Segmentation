@@ -1,0 +1,450 @@
+{
+  "baseline": "46847fad8dcd0d97b4f09fa7178c96ea5fce99ce",
+  "device": "cuda",
+  "cases": [
+    {
+      "image": "Te-gl_22.jpg",
+      "dataset_label": "glioma",
+      "native_size": [
+        512,
+        512
+      ],
+      "preview_rect": [
+        0,
+        0,
+        224,
+        224
+      ],
+      "predictions": {
+        "CNN": "glioma",
+        "Swin-Tiny": "glioma"
+      },
+      "old": {
+        "status": "hazır",
+        "box": [
+          26,
+          22,
+          159,
+          202
+        ],
+        "box_reason": null,
+        "box_source": "gradcam_stage_3",
+        "box_stages": null,
+        "pixels": 21723,
+        "elapsed_s": 2.38,
+        "native_box": null
+      },
+      "current": {
+        "status": "hazır",
+        "box": [
+          63,
+          92,
+          97,
+          136
+        ],
+        "box_reason": "Aşama 3: önerilen kutu ön plana göre çok geniş.",
+        "box_source": "gradcam_agreement",
+        "box_stages": [
+          3,
+          4
+        ],
+        "pixels": 1467,
+        "elapsed_s": 2.535,
+        "native_box": [
+          144.0,
+          210.2857208251953,
+          221.7142791748047,
+          310.8571472167969
+        ]
+      },
+      "default": {
+        "status": "kutu_yok",
+        "box": null,
+        "box_reason": "Aşama 3: önerilen kutu ön plana göre çok geniş.",
+        "box_source": null,
+        "box_stages": null,
+        "pixels": null,
+        "elapsed_s": 0.619,
+        "native_box": null
+      }
+    },
+    {
+      "image": "Te-aug-me_7.jpg",
+      "dataset_label": "meningioma",
+      "native_size": [
+        512,
+        512
+      ],
+      "preview_rect": [
+        0,
+        0,
+        224,
+        224
+      ],
+      "predictions": {
+        "CNN": "meningioma",
+        "Swin-Tiny": "meningioma"
+      },
+      "old": {
+        "status": "hazır",
+        "box": [
+          44,
+          41,
+          178,
+          192
+        ],
+        "box_reason": null,
+        "box_source": "gradcam_stage_3",
+        "box_stages": null,
+        "pixels": 16967,
+        "elapsed_s": 1.442,
+        "native_box": null
+      },
+      "current": {
+        "status": "hazır",
+        "box": [
+          119,
+          73,
+          170,
+          140
+        ],
+        "box_reason": null,
+        "box_source": "gradcam_selected",
+        "box_stages": [
+          3
+        ],
+        "pixels": 1062,
+        "elapsed_s": 1.699,
+        "native_box": [
+          272.0,
+          166.85714721679688,
+          388.5714416503906,
+          320.0
+        ]
+      },
+      "default": {
+        "status": "hazır",
+        "box": [
+          119,
+          73,
+          170,
+          140
+        ],
+        "box_reason": null,
+        "box_source": "gradcam_selected",
+        "box_stages": [
+          3
+        ],
+        "pixels": 1062,
+        "elapsed_s": 1.59,
+        "native_box": [
+          272.0,
+          166.85714721679688,
+          388.5714416503906,
+          320.0
+        ]
+      }
+    },
+    {
+      "image": "Te-gl_1.jpg",
+      "dataset_label": "glioma",
+      "native_size": [
+        354,
+        442
+      ],
+      "preview_rect": [
+        22,
+        0,
+        179,
+        224
+      ],
+      "predictions": {
+        "CNN": "notumor",
+        "Swin-Tiny": "notumor"
+      },
+      "old": {
+        "status": "atlandı",
+        "box": null,
+        "box_reason": null,
+        "box_source": null,
+        "box_stages": null,
+        "pixels": null,
+        "elapsed_s": 0.172,
+        "native_box": null
+      },
+      "current": {
+        "status": "atlandı",
+        "box": null,
+        "box_reason": null,
+        "box_source": null,
+        "box_stages": null,
+        "pixels": null,
+        "elapsed_s": 0.497,
+        "native_box": null
+      },
+      "default": {
+        "status": "atlandı",
+        "box": null,
+        "box_reason": null,
+        "box_source": null,
+        "box_stages": null,
+        "pixels": null,
+        "elapsed_s": 0.505,
+        "native_box": null
+      }
+    },
+    {
+      "image": "Te-me_263.jpg",
+      "dataset_label": "meningioma",
+      "native_size": [
+        512,
+        512
+      ],
+      "preview_rect": [
+        0,
+        0,
+        224,
+        224
+      ],
+      "predictions": {
+        "CNN": "meningioma",
+        "Swin-Tiny": "meningioma"
+      },
+      "old": {
+        "status": "hazır",
+        "box": [
+          28,
+          35,
+          152,
+          199
+        ],
+        "box_reason": null,
+        "box_source": "gradcam_stage_3",
+        "box_stages": null,
+        "pixels": 17781,
+        "elapsed_s": 1.385,
+        "native_box": null
+      },
+      "current": {
+        "status": "hazır",
+        "box": [
+          107,
+          72,
+          152,
+          119
+        ],
+        "box_reason": null,
+        "box_source": "gradcam_selected",
+        "box_stages": [
+          3
+        ],
+        "pixels": 748,
+        "elapsed_s": 1.719,
+        "native_box": [
+          244.57142639160156,
+          164.57142639160156,
+          347.4285583496094,
+          272.0
+        ]
+      },
+      "default": {
+        "status": "hazır",
+        "box": [
+          107,
+          72,
+          152,
+          119
+        ],
+        "box_reason": null,
+        "box_source": "gradcam_selected",
+        "box_stages": [
+          3
+        ],
+        "pixels": 748,
+        "elapsed_s": 1.689,
+        "native_box": [
+          244.57142639160156,
+          164.57142639160156,
+          347.4285583496094,
+          272.0
+        ]
+      }
+    },
+    {
+      "image": "Te-pi_1.jpg",
+      "dataset_label": "pituitary",
+      "native_size": [
+        512,
+        512
+      ],
+      "preview_rect": [
+        0,
+        0,
+        224,
+        224
+      ],
+      "predictions": {
+        "CNN": "pituitary",
+        "Swin-Tiny": "pituitary"
+      },
+      "old": {
+        "status": "hazır",
+        "box": [
+          25,
+          38,
+          199,
+          183
+        ],
+        "box_reason": null,
+        "box_source": "gradcam_stage_3",
+        "box_stages": null,
+        "pixels": 19767,
+        "elapsed_s": 1.298,
+        "native_box": null
+      },
+      "current": {
+        "status": "hazır",
+        "box": [
+          16,
+          88,
+          91,
+          186
+        ],
+        "box_reason": "Aşama 3: aktivasyonlar birbirinden yeterince ayrışmadı.",
+        "box_source": "gradcam_other_stage",
+        "box_stages": [
+          4
+        ],
+        "pixels": 3774,
+        "elapsed_s": 2.127,
+        "native_box": [
+          36.57143020629883,
+          201.14285278320312,
+          208.0,
+          425.1428527832031
+        ]
+      },
+      "default": {
+        "status": "kutu_yok",
+        "box": null,
+        "box_reason": "Aşama 3: aktivasyonlar birbirinden yeterince ayrışmadı.",
+        "box_source": null,
+        "box_stages": null,
+        "pixels": null,
+        "elapsed_s": 0.563,
+        "native_box": null
+      }
+    },
+    {
+      "image": "Te-no_1.jpg",
+      "dataset_label": "notumor",
+      "native_size": [
+        200,
+        252
+      ],
+      "preview_rect": [
+        23,
+        0,
+        178,
+        224
+      ],
+      "predictions": {
+        "CNN": "notumor",
+        "Swin-Tiny": "notumor"
+      },
+      "old": {
+        "status": "atlandı",
+        "box": null,
+        "box_reason": null,
+        "box_source": null,
+        "box_stages": null,
+        "pixels": null,
+        "elapsed_s": 0.223,
+        "native_box": null
+      },
+      "current": {
+        "status": "atlandı",
+        "box": null,
+        "box_reason": null,
+        "box_source": null,
+        "box_stages": null,
+        "pixels": null,
+        "elapsed_s": 0.517,
+        "native_box": null
+      },
+      "default": {
+        "status": "atlandı",
+        "box": null,
+        "box_reason": null,
+        "box_source": null,
+        "box_stages": null,
+        "pixels": null,
+        "elapsed_s": 0.503,
+        "native_box": null
+      }
+    }
+  ],
+  "checkpoints_sha256": {
+    "CNN": "ae6501b19f70a1479374d9111cc954a76a2e1fa77a6863ddf159c3b03bf1fa98",
+    "Swin-Tiny": "8f0f9f82197dcd984e937fcb71a469fa37c8914412173c3c63f0d3348e1d2558",
+    "SAM ViT-B": "ec2df62732614e57411cdcf32a23ffdf28910380d03139ee0f4fcbe91eb8c912"
+  },
+  "hooks": {
+    "3": {
+      "activation_shape": [
+        1,
+        14,
+        14,
+        384
+      ],
+      "gradient_shape": [
+        1,
+        14,
+        14,
+        384
+      ],
+      "hook_cleanup": true,
+      "stable_repeat": true
+    },
+    "4": {
+      "activation_shape": [
+        1,
+        7,
+        7,
+        768
+      ],
+      "gradient_shape": [
+        1,
+        7,
+        7,
+        768
+      ],
+      "hook_cleanup": true,
+      "stable_repeat": true
+    }
+  },
+  "fallback_off": {
+    "status": "kutu_yok",
+    "reason": "Aşama 3: önerilen kutu ön plana göre çok geniş."
+  },
+  "cpu_cuda": {
+    "class": "glioma",
+    "max_abs_cam_difference": 1.8775463104248047e-06,
+    "mean_abs_cam_difference": 3.5180369195586536e-07
+  },
+  "status_counts": {
+    "old": {
+      "hazır": 4,
+      "atlandı": 2
+    },
+    "default": {
+      "kutu_yok": 2,
+      "hazır": 2,
+      "atlandı": 2
+    },
+    "current": {
+      "hazır": 4,
+      "atlandı": 2
+    }
+  }
+}

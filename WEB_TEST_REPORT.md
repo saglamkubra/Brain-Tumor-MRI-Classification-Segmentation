@@ -32,3 +32,13 @@ Bu örnekte otomatik maske görüntünün yaklaşık %55’ini kapladı. SAM kal
 ## Windows ve tarayıcı
 
 `start.bat` mevcut proje sanal ortamıyla çalıştırıldı. Sunucu `127.0.0.1:8000` üzerinde açıldı ve Microsoft Edge otomatik olarak uygulamaya gitti. Edge'de gerçek JPG seçildi, üç tahmin kartı ve Grad-CAM görüntülendi. Fareyle manuel kutu çizildi ve manuel maske üretildi. Otomatik ve manuel maskeler aynı karşılaştırma alanında görüntülendi. İlk bağımlılık kurulumu boş bir sanal ortamdan `start.bat` ile yeniden denenmedi.
+
+## Güncel platform doğrulaması
+
+- `start.bat --port 8011` ile Windows sunucusu başlatıldı. CUDA üzerinde CNN V2, Swin-Tiny V3 ve SAM ViT-B yüklendi.
+- Dört örnek JPG ve bir PNG ile canlı sınıflandırma doğrulandı. Meningioma, hipofiz tümörü ve tümör yok örneklerinde iki sınıflandırıcı da doğru sınıfı seçti. Kullanılan glioma örneğinde ikisi de tümör yok tahmini verdi.
+- Aynı meningioma örneğinde aşama 3 ve 4 Grad-CAM haritaları farklı çıktı verdi. Otomatik ve manuel SAM 224 × 224 boş olmayan maskeler üretti. Bunlar işlev testleridir. Tümör sınırı doğruluğu ölçülmedi.
+- Tümör yok sınıfında otomatik SAM atlandı. Hatalı kutu, bozuk içerik, yanlış dosya türü ve boyut sınırı denetimleri geçti.
+- Canlı PubMed sorgusu 12 kayıt döndürdü. PDF raporu tahminler, orijinal görüntü, iki Grad-CAM çıktısı, SAM çıktıları ve gerçek PubMed bağlantıları ile üç sayfa üretildi.
+- Chrome, 1440 ve 390 piksel genişliklerde iki performans kartını yatay taşma olmadan çizdi. Demo tahmini, otomatik SAM ve iki Grad-CAM çıktısı tarayıcıda çalıştı.
+- Aynı 1.579 görüntülük V3 listesinde CNN V2 doğruluğu %89,61 ve makro F1 %89,55, Swin-Tiny V3 doğruluğu %93,86 ve makro F1 %93,79. Ayrıntılar `results/web_v3_performance.json` dosyasında. Hasta düzeyinde bağımsızlık doğrulanamadı.

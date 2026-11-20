@@ -1,0 +1,27 @@
+﻿image,truth,prediction,group,old_status,old_box,old_pixels,new_status,new_box,new_pixels,stage4_before,stage4_after,cnn_before,cnn_after
+Te-gl_22.jpg,glioma,glioma,regression,kutu_yok,,,kutu_yok,,,c0345d9b1338aa41aca2357efd2615f1863a9b34927c6075243d009355ec73d8,c0345d9b1338aa41aca2357efd2615f1863a9b34927c6075243d009355ec73d8,4313819a15cf7ce892b7766a06d02e967f47f70a23be46848441a25c85c7e1e3,4313819a15cf7ce892b7766a06d02e967f47f70a23be46848441a25c85c7e1e3
+Te-aug-me_7.jpg,meningioma,meningioma,regression,hazır,"[119, 73, 170, 140]",1062,kutu_yok,,,ea1912e03251efb756447bd2f73b0c649ec185a154b6de0753d9ea5d3b87b9c1,ea1912e03251efb756447bd2f73b0c649ec185a154b6de0753d9ea5d3b87b9c1,80e09c4defc26402552af9af331ad4bf4a5f139e30ef1b486583cbdbafa71ab3,80e09c4defc26402552af9af331ad4bf4a5f139e30ef1b486583cbdbafa71ab3
+Te-gl_1.jpg,glioma,notumor,regression,atlandı,,,atlandı,,,738e3b83f7fb191e7629197322ba68c248928ef03a7bdcba40649d3cb98c1cb2,738e3b83f7fb191e7629197322ba68c248928ef03a7bdcba40649d3cb98c1cb2,639dc9a4f58821a44c64214f0b8e26f922dc4d5b0c28106c1218e47154a1f806,639dc9a4f58821a44c64214f0b8e26f922dc4d5b0c28106c1218e47154a1f806
+Te-me_263.jpg,meningioma,meningioma,regression,hazır,"[107, 72, 152, 119]",748,hazır,"[53, 137, 85, 164]",783,b06c7c184c1a6cd55bf7f5cef1b9181a60bbae97796f4fa56e5fa37f9a28c55e,b06c7c184c1a6cd55bf7f5cef1b9181a60bbae97796f4fa56e5fa37f9a28c55e,3c3b010defdefe24aa15e4379f4dfaf7f170e74798348646237acad6dc09170b,3c3b010defdefe24aa15e4379f4dfaf7f170e74798348646237acad6dc09170b
+Te-pi_1.jpg,pituitary,pituitary,regression,kutu_yok,,,hazır,"[16, 110, 71, 213]",869,1ebda4b645ca2418bc39d4f95aadf0a853ca01a84590a37fe6a495650991e4d8,1ebda4b645ca2418bc39d4f95aadf0a853ca01a84590a37fe6a495650991e4d8,c7c96fdc3cf3039aebeaabd2d3e9e1111f7255da5809cf2ab6c55a2b63f09b28,c7c96fdc3cf3039aebeaabd2d3e9e1111f7255da5809cf2ab6c55a2b63f09b28
+Te-no_1.jpg,notumor,notumor,regression,atlandı,,,atlandı,,,a7176113141b76af4a4d70a31d5e03511416f613162d22a609f4406c32fa3b78,a7176113141b76af4a4d70a31d5e03511416f613162d22a609f4406c32fa3b78,fe015a82abfd0220c14880b4b246c71801aec5041c549dd06f3ac4e23a51e0b1,fe015a82abfd0220c14880b4b246c71801aec5041c549dd06f3ac4e23a51e0b1
+Te-gl_332.jpg,glioma,glioma,sample20,kutu_yok,,,kutu_yok,,,,,,
+Te-gl_82.jpg,glioma,glioma,sample20,hazır,"[76, 38, 136, 86]",2670,hazır,"[106, 44, 131, 83]",975,,,,
+Te-gl_35.jpg,glioma,glioma,sample20,hazır,"[72, 22, 165, 80]",4132,hazır,"[82, 29, 166, 83]",3600,,,,
+Te-gl_87.jpg,glioma,meningioma,sample20,hazır,"[105, 57, 131, 84]",263,hazır,"[68, 72, 119, 138]",2612,,,,
+Te-gl_397.jpg,glioma,glioma,sample20,hazır,"[140, 44, 163, 69]",523,maske_yok,"[172, 122, 192, 146]",,,,,
+Te-me_106.jpg,meningioma,meningioma,sample20,hazır,"[44, 42, 118, 109]",1876,hazır,"[145, 65, 179, 99]",1000,,,,
+Te-aug-me_15.jpg,meningioma,meningioma,sample20,hazır,"[118, 65, 164, 102]",1334,hazır,"[165, 112, 216, 206]",2710,,,,
+Te-me_124.jpg,meningioma,meningioma,sample20,hazır,"[73, 56, 115, 101]",926,hazır,"[75, 55, 115, 99]",850,,,,
+Te-me_270.jpg,meningioma,meningioma,sample20,hazır,"[101, 37, 138, 73]",630,hazır,"[65, 156, 104, 218]",382,,,,
+Te-me_62.jpg,meningioma,meningioma,sample20,hazır,"[65, 76, 102, 115]",331,hazır,"[160, 184, 182, 206]",270,,,,
+Te-no_304.jpg,notumor,notumor,sample20,atlandı,,,atlandı,,,,,,
+Te-no_267.jpg,notumor,notumor,sample20,atlandı,,,atlandı,,,,,,
+Te-no_125.jpg,notumor,notumor,sample20,atlandı,,,atlandı,,,,,,
+Te-no_226.jpg,notumor,notumor,sample20,atlandı,,,atlandı,,,,,,
+Te-no_380.jpg,notumor,notumor,sample20,atlandı,,,atlandı,,,,,,
+Te-pi_122.jpg,pituitary,pituitary,sample20,kutu_yok,,,hazır,"[90, 0, 135, 40]",230,,,,
+Te-pi_52.jpg,pituitary,pituitary,sample20,hazır,"[118, 78, 178, 138]",2928,hazır,"[118, 168, 207, 223]",4452,,,,
+Te-pi_46.jpg,pituitary,pituitary,sample20,hazır,"[21, 75, 122, 174]",7550,kutu_yok,,,,,,
+Te-pi_184.jpg,pituitary,pituitary,sample20,hazır,"[27, 27, 128, 114]",6715,kutu_yok,,,,,,
+Te-pi_73.jpg,pituitary,pituitary,sample20,kutu_yok,,,hazır,"[30, 34, 80, 83]",1051,,,,
