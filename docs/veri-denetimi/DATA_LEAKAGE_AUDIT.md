@@ -6,8 +6,8 @@
 
 ## Veri bölmeleri nasıl oluşturuldu?
 
-- **Swin**, sıfır tabanlı hücre 6’da `Training/` klasöründeki görüntüleri sınıf sırasıyla, her sınıfta dosya adına göre sıralıyor. `train_test_split(test_size=0.20, random_state=42, stratify=df["sinif"])` ile görüntü düzeyinde ayırıyor. Hücre 7, listeleri `train.csv` ve `val.csv` olarak yazıyor, `Testing/` altındaki bütün uygun görüntüleri `test.csv` olarak kaydediyor. Hücreler 10 ve 12 bu CSV’leri tekrar okuyor. [Swin notebook](notebooks/Swin_Transformer_SAM.ipynb)
-- **CNN ve ViT**, aynı Google Drive proje klasöründeki `veri_bolunmesi/train.csv`, `val.csv` ve `test.csv` dosyalarını okuyor. Her ikisinin kayıtlı çıktısındaki bölme boyutları 4.480/1.120/1.600. CNN’in yazdırdığı ilk eğitim, doğrulama ve test dosyaları yeniden oluşturulan listelerin ilk dosyalarıyla eşleşti. Ortak CSV adları, boyutlar ve örnek yollar ortak bölme kullanıldığına işaret ediyor. [CNN notebook](notebooks/CNN.ipynb) · [ViT notebook](notebooks/ViT.ipynb)
+- **Swin**, sıfır tabanlı hücre 6’da `Training/` klasöründeki görüntüleri sınıf sırasıyla, her sınıfta dosya adına göre sıralıyor. `train_test_split(test_size=0.20, random_state=42, stratify=df["sinif"])` ile görüntü düzeyinde ayırıyor. Hücre 7, listeleri `train.csv` ve `val.csv` olarak yazıyor, `Testing/` altındaki bütün uygun görüntüleri `test.csv` olarak kaydediyor. Hücreler 10 ve 12 bu CSV’leri tekrar okuyor. [Swin notebook](../../notebooks/Swin_Transformer_SAM.ipynb)
+- **CNN ve ViT**, aynı Google Drive proje klasöründeki `veri_bolunmesi/train.csv`, `val.csv` ve `test.csv` dosyalarını okuyor. Her ikisinin kayıtlı çıktısındaki bölme boyutları 4.480/1.120/1.600. CNN’in yazdırdığı ilk eğitim, doğrulama ve test dosyaları yeniden oluşturulan listelerin ilk dosyalarıyla eşleşti. Ortak CSV adları, boyutlar ve örnek yollar ortak bölme kullanıldığına işaret ediyor. [CNN notebook](../../notebooks/CNN.ipynb) · [ViT notebook](../../notebooks/ViT.ipynb)
 - Özgün CSV’ler çalışma alanında, üst klasörün aranabilen dosyalarında veya yereldeki GitHub geçmişi kopyasında bulunmadı. Arşivde yalnızca görüntü dosyaları var. Dolayısıyla üç notebook’un **özgün satır üyeliği** tek tek karşılaştırılamadı. Aşağıdaki eğitim/doğrulama ayrımı Swin kodunun yerel arşiv üzerinde yeniden üretilmiş halidir. Test ile birleşik `Training/` arasındaki sonuç bu yeniden bölme varsayımından bağımsızdır.
 
 | Bölme | Toplam | Sınıf başına |
@@ -53,7 +53,7 @@ Görüntüler gri tonlamalı 32×32 önizlemeye dönüştürüldü. İki boyutlu
 - **27 çifti yan yana görsel olarak inceledim.** Buna farklı etiketli sekiz adayın tamamı ve üç bölüm karşılaştırmasından 19 aynı etiketli örnek dahil. İncelenen çiftlerin 18’i aynı kesitin varyantı olabileceğine dair güçlü görsel benzerlik gösterdi, 8’i belirsiz kaldı, 1’inde anatomik görünüm belirgin biçimde farklıydı. Kalan **2.121 çift** görsel olarak tek tek incelenmedi. Karşılaştırma dosyası her bir adayın durumunu gösteriyor.
 - Sekiz farklı etiketli adayın dördü eğitim ↔ test, dördü test içi. Görsel olarak iki grupta toplanıyorlar. `Te-gl_68.jpg` ve `Te-gl_160.jpg` glioma etiketli, yakın karşılıkları ise meningioma etiketli. Sekiz çiftte anatomik yapı ve lezyon görünümü çok yakın. Görsel inceleme, hangi etiketin doğru olduğunu veya aynı hastaya ait olduklarını belirlemiyor. Kesin bayt/piksel eşlerinde farklı etiket saptanmadı.
 
-Görsel karşılaştırma dosyası yerel çalışma arşivinde. [Kesin ve aday çiftlerin CSV kaydı](data_leakage_audit/matches.csv)
+Görsel karşılaştırma dosyası yerel çalışma arşivinde. [Kesin ve aday çiftlerin CSV kaydı](../../data_leakage_audit/matches.csv)
 
 ## Hasta düzeyi, dönüşümler ve model seçimi
 
@@ -73,7 +73,7 @@ Görsel karşılaştırma dosyası yerel çalışma arşivinde. [Kesin ve aday �
 | Eğitim/doğrulamada piksel eşi bulunanları hariç tut | 1.486 | %81,36 / %79,99 | %90,44 / %89,88 | %93,00 / %92,73 |
 | Eğitim/doğrulama ile pHash adaylarını da hariç tut | 1.163 | %76,61 / %73,15 | %87,96 / %87,98 | %91,23 / %90,25 |
 
-Model sıralaması iki alt kümede de korundu. Piksel-eş kayıtları çıkarmak Swin-Tiny accuracy’sini 0,25 puan düşürürken CNN accuracy’sini artırdı. Sınıf bileşimi de değişti. Son alt kümede 400 notumor görüntüsünden 84’ü kaldı. Bu farklar veri sızıntısının nedensel etkisini ölçmez. Aynı veya ilişkili kesitlerin eğitime girmiş olması değerlendirmeyi gereğinden iyimser yapabilir, test içi tekrarlar da bazı kesitlere fazladan ağırlık verir. Ayrıca etiket uyuşmazlığı, yüksek skorlu bazı yanlışların yorumunu değiştiriyor. `Te-gl_68.jpg` Swin-Tiny’nin, `Te-gl_160.jpg` ise ViT’nin önceki testteki en yüksek skorlu yanlışıydı. [Önceki değerlendirme](MODEL_PERFORMANCE_ANALYSIS.md)
+Model sıralaması iki alt kümede de korundu. Piksel-eş kayıtları çıkarmak Swin-Tiny accuracy’sini 0,25 puan düşürürken CNN accuracy’sini artırdı. Sınıf bileşimi de değişti. Son alt kümede 400 notumor görüntüsünden 84’ü kaldı. Bu farklar veri sızıntısının nedensel etkisini ölçmez. Aynı veya ilişkili kesitlerin eğitime girmiş olması değerlendirmeyi gereğinden iyimser yapabilir, test içi tekrarlar da bazı kesitlere fazladan ağırlık verir. Ayrıca etiket uyuşmazlığı, yüksek skorlu bazı yanlışların yorumunu değiştiriyor. `Te-gl_68.jpg` Swin-Tiny’nin, `Te-gl_160.jpg` ise ViT’nin önceki testteki en yüksek skorlu yanlışıydı. [Önceki değerlendirme](../deneyler/MODEL_PERFORMANCE_ANALYSIS.md)
 
 ## Önerilen düzeltmeler
 

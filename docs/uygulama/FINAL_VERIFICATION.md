@@ -35,7 +35,7 @@ Bu sayılar önceki uygulamadan gelen sezgisel eşiklerdir. Klinik veriyle optim
 
 Otomatik değerlendirmeye giren 15 örnekte oran %100'den %93,33'e indi. Beş “tümör yok” tahmini iki sürümde de atlandı. Yalnız Te-gl_332 değişti. Önceki tek aşamalı alternatif kutu `[93,190,131,223]` 1.099 piksellik maske verdi. Güncel sürüm kutu döndürmedi. Referans maskeler olmadan bu kararın segmentasyon doğruluğuna etkisi ölçülemez.
 
-[20 vakalık tablo](results/swin_v3/fallback_validation/table.md) · [Kutu kaynaklarını da içeren CSV](results/swin_v3/fallback_validation/v3_sample20.csv)
+[20 vakalık tablo](../../results/swin_v3/fallback_validation/table.md) · [Kutu kaynaklarını da içeren CSV](../../results/swin_v3/fallback_validation/v3_sample20.csv)
 
 ## 3. Swin profili
 

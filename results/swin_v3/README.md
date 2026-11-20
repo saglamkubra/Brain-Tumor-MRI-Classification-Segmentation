@@ -11,7 +11,7 @@ Bu klasörde 1.579 görüntülük V3 test listesiyle elde edilen sonuçlar bulun
 
 Colab T4 çalışmasının ayrıntılı çıktıları Drive’da `results/swin_v3/finetuning/colab_20261118T160853420387Z/` altında. Özet metrikler [ana deney tablosunda](../../README.md#swin-deneyleri).
 
-Aynı adlı eğitim grafikleri farklı deneylere aittir. Önceki paylaşılan fine-tuning değerleri ve yerel çalışma arasındaki farklar [Swin V3 raporunda](../../SWIN_V3_TRAINING_REPORT.md) açıklanıyor.
+Aynı adlı eğitim grafikleri farklı deneylere aittir. Önceki paylaşılan fine-tuning değerleri ve yerel çalışma arasındaki farklar [Swin V3 raporunda](../../docs/deneyler/SWIN_V3_TRAINING_REPORT.md) açıklanıyor.
 
 ## Grafikler ve ek analizler
 

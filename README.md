@@ -19,6 +19,8 @@
 
 ## Hızlı başlangıç
 
+[Rapor dizini](docs/README.md) · [Deney grafikleri ve görselli raporlar](results/README.md)
+
 - **Yerel uygulama (Windows):** Uygun Python ortamı ve model checkpoint'leri hazırsa `start.bat` dosyasını çalıştırın. Ayrıntılar için [kurulum](#9-kurulum-ve-çalıştırma) bölümüne bakın.
 - **CNN:** [CNN sonuçları](#51-cnn-sınıflandırma-sonuçları), [CNN eğitim ve değerlendirme görselleri](#61-cnn--seçilmiş-analiz-görselleri) ve modelin [Python kullanımı](#95-cnn-python-çıkarımı).
 - **Swin Transformer eğitim/deneyleri:** [Colab notebook'u](https://colab.research.google.com/github/saglamkubra/Brain-Tumor-MRI-Classification-Segmentation/blob/main/notebooks/Swin_Tiny_V3_FineTuning_Colab.ipynb) ve [deney klasörü](experiments/swin_v3/).
@@ -30,7 +32,7 @@
 
 | Adım | Uygulanan yöntem | Kod ve deney |
 | --- | --- | --- |
-| Veri hazırlığı | Görüntü tekrarları ve benzerlik kontrolü, sınıf dağılımı ve veri bölme | [Veri hazırlama notebook’u](Data_Preprocessing/01_Data_Preprocessing.ipynb) · [Veri sızıntısı denetimi](DATA_LEAKAGE_AUDIT.md) |
+| Veri hazırlığı | Görüntü tekrarları ve benzerlik kontrolü, sınıf dağılımı ve veri bölme | [Veri hazırlama notebook’u](Data_Preprocessing/01_Data_Preprocessing.ipynb) · [Veri sızıntısı denetimi](docs/veri-denetimi/DATA_LEAKAGE_AUDIT.md) |
 | Model girişleri | 224 × 224 boyutlandırma, CNN için gri ton ve paket normalizasyonu, Swin için RGB ve ImageNet normalizasyonu | [Ön işleme ve model yükleme](backend/models.py) · [CNN V2](notebooks/CNN_V2.ipynb) |
 | MR önizlemesi | En-boy oranını koruyan ölçekleme ve dolgu, önizleme ile özgün koordinatlar arasında kutu dönüşümü | [Önizleme geometrisi ve SAM](backend/segmentation.py) |
 | Kontrastla aday bölge | Gri ton dönüşümü, Gauss bulanıklaştırma, morfolojik kapama ve erozyon, bağlı bileşen analizi | [Kontrastla kutu üretimi](backend/lesion_candidate.py) |
@@ -388,7 +390,7 @@ Arayüz CNN ve Swin tahminlerini, Grad-CAM ve otomatik veya manuel SAM görselle
 | `POST /model-inputs` · `POST /intervene` | Gerçek model girişleri ve müdahale sonucu |
 | `GET /performance` · `GET /research` · `POST /report` | Kayıtlı test metrikleri, gerçek PubMed kayıtları ve PDF |
 
-[Test raporu](WEB_TEST_REPORT.md) · [Gerçek MR ile ekranlar](results/NEURO_AI_LAB_uygulama_ekranlari.pdf) · [Son doğrulama ve önce/sonra görselleri](results/NEURO_AI_LAB_7_duzeltme_raporu.pdf)
+[Test raporu](docs/uygulama/WEB_TEST_REPORT.md) · [Gerçek MR ile ekranlar](results/NEURO_AI_LAB_uygulama_ekranlari.pdf) · [Son doğrulama ve önce/sonra görselleri](results/NEURO_AI_LAB_7_duzeltme_raporu.pdf)
 
 ## 11. Google Drive ve model dosyaları
 

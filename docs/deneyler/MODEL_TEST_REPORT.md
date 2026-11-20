@@ -41,4 +41,4 @@ SAM aynı kutuyla üç maske üretti. Kalite skorları 0,861736, 0,909229 ve 0,9
 
 ## GitHub
 
-[`.gitignore`](.gitignore) dosyasına `/models/` eklendi. `git check-ignore` ile kuralın dört dosyaya da uygulandığı doğrulandı. GitHub deposunun yayımlanan `main` dalındaki 23 commit tarandı. Uç commit `4bb080a6f8930c848feeb9588c37b8ae53b16e7d` idi. Geçmişte checkpoint yolları aranıp dört dosyanın Git blob kimliği geçmişteki nesnelerle karşılaştırıldı. Her iki kontrolde de eşleşme çıkmadı. [GitHub deposu](https://github.com/saglamkubra/Brain-Tumor-MRI-Classification-Segmentation)
+[`.gitignore`](../../.gitignore) dosyasına `/models/` eklendi. `git check-ignore` ile kuralın dört dosyaya da uygulandığı doğrulandı. GitHub deposunun yayımlanan `main` dalındaki 23 commit tarandı. Uç commit `4bb080a6f8930c848feeb9588c37b8ae53b16e7d` idi. Geçmişte checkpoint yolları aranıp dört dosyanın Git blob kimliği geçmişteki nesnelerle karşılaştırıldı. Her iki kontrolde de eşleşme çıkmadı. [GitHub deposu](https://github.com/saglamkubra/Brain-Tumor-MRI-Classification-Segmentation)

@@ -29,7 +29,7 @@ Görevde adı geçen “Kapsamlı Proje Devir Dokümanı” ve “Profesyonel We
 - Model ve API: `backend/cnn_architecture.py`, `backend/models.py`, `backend/segmentation.py`, `backend/main.py`, `backend/research.py`, `backend/report.py`.
 - Arayüz: `frontend/index.html`, `frontend/app.js`, `frontend/style.css`.
 - Doğrulama ve belgeler: `tests/smoke_web.py`, `README.md`, bu rapor. Mevcut CNN deney grafikleri `results/CNN_V2 sonuçlar/` klasörüne Git kopyasından alındı.
-- [Altı gerçek MR'ın önce/sonra paneli](results/swin_v3/gradcam_sam_hizalama/gradcam_sam_once_sonra.png) ve [denetim raporu](results/swin_v3/gradcam_sam_hizalama/README.md).
+- [Altı gerçek MR'ın önce/sonra paneli](../../results/swin_v3/gradcam_sam_hizalama/gradcam_sam_once_sonra.png) ve [denetim raporu](../../results/swin_v3/gradcam_sam_hizalama/README.md).
 
 ```powershell
 .\start.bat --port 8011

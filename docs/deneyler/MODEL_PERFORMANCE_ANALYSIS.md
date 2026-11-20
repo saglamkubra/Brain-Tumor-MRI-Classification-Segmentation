@@ -14,7 +14,7 @@ Swin-Tiny, aynı test kümesinde **%93,25 accuracy** ve **%93,19 macro F1** ile 
 | ViT, hücreler 8–9 | RGB, 224×224, %50 yatay çevirme, ±10° döndürme, `ToTensor`, ImageNet normalizasyonu | RGB, 224×224, `ToTensor`, ImageNet normalizasyonu |
 | Swin, hücreler 10 ve 12 | RGB, 224×224, ±10° döndürme, `ToTensor`, ImageNet normalizasyonu | RGB, 224×224, `ToTensor`, aynı normalizasyonu kullanan `val_transform` |
 
-ImageNet ortalaması `[0.485, 0.456, 0.406]`, standart sapması `[0.229, 0.224, 0.225]`. Dönüşüm tanımları notebook hücrelerinden çıkarıldı. ViT ve Swin’in eğitim hatlarındaki ortak adımların testteki karşılıkları ve rastgele artırma ayarları kontrol edildi. Ayrıca notebook değerlendirme tensörü ile Canlı Demo’nun hazırladığı tensör **her model için 1.600/1.600 görüntüde eleman bazında birebir eşleşti**. Hücre numaraları sıfır tabanlıdır. [CNN](notebooks/CNN.ipynb) · [ViT](notebooks/ViT.ipynb) · [Swin](notebooks/Swin_Transformer_SAM.ipynb)
+ImageNet ortalaması `[0.485, 0.456, 0.406]`, standart sapması `[0.229, 0.224, 0.225]`. Dönüşüm tanımları notebook hücrelerinden çıkarıldı. ViT ve Swin’in eğitim hatlarındaki ortak adımların testteki karşılıkları ve rastgele artırma ayarları kontrol edildi. Ayrıca notebook değerlendirme tensörü ile Canlı Demo’nun hazırladığı tensör **her model için 1.600/1.600 görüntüde eleman bazında birebir eşleşti**. Hücre numaraları sıfır tabanlıdır. [CNN](../../notebooks/CNN.ipynb) · [ViT](../../notebooks/ViT.ipynb) · [Swin](../../notebooks/Swin_Transformer_SAM.ipynb)
 
 ## Genel sonuçlar
 
@@ -26,7 +26,7 @@ ImageNet ortalaması `[0.485, 0.456, 0.406]`, standart sapması `[0.229, 0.224, 
 
 Sınıf destekleri eşit olduğu için macro recall accuracy’ye, macro F1 weighted F1’a eşit. Swin-Tiny, ViT’den 48 ve CNN’den 264 daha fazla görüntüyü doğru sınıflandırdı.
 
-![Genel metrikler ve sınıf bazında F1 karşılaştırması](performance_analysis/model_comparison.png)
+![Genel metrikler ve sınıf bazında F1 karşılaştırması](../../performance_analysis/model_comparison.png)
 
 ## Sınıf bazında precision, recall ve F1
 
@@ -51,7 +51,7 @@ Swin-Tiny dört sınıfta da en yüksek F1’ı verdi. ViT, glioma precision ve 
 
 Satırlar gerçek test etiketini, sütunlar model tahminini gösterir. Her satırda 400 görüntü vardır.
 
-![CNN, ViT ve Swin-Tiny karmaşıklık matrisleri](performance_analysis/confusion_matrices.png)
+![CNN, ViT ve Swin-Tiny karmaşıklık matrisleri](../../performance_analysis/confusion_matrices.png)
 
 | Gerçek etiket glioma (400) | Doğru glioma | meningioma | notumor | pituitary | Toplam yanlış |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -81,7 +81,7 @@ Her hücre, ilgili eşikte **yanlış tahmin / eşiği geçen tüm tahmin** say�
 | ViT | Te-gl_160.jpg | glioma → meningioma | %99,5806 |
 | Swin-Tiny | Te-gl_68.jpg | glioma → meningioma | %99,9949 |
 
-![Glioma tahmin dağılımı ve yüksek softmax skorlu yanlışlar](performance_analysis/glioma_and_confidence.png)
+![Glioma tahmin dağılımı ve yüksek softmax skorlu yanlışlar](../../performance_analysis/glioma_and_confidence.png)
 
 ## Te-gl_1.jpg · Test etiketi glioma
 
@@ -129,6 +129,6 @@ Model değiştirmeden önce, benzer ve çelişkili örnekleri kaynak veride ince
 
 ## Çıktılar
 
-- [Tüm tahminler ve dört sınıf olasılıkları](performance_analysis/predictions.csv) · 4.800 satır
-- [En az %90 skorlu yanlış tahminler](performance_analysis/high_confidence_errors.csv)
-- [Örtüşme çiftleri, benzerlik ölçüleri ve etiket uyuşmazlıkları](performance_analysis/overlap_pairs.csv)
+- [Tüm tahminler ve dört sınıf olasılıkları](../../performance_analysis/predictions.csv) · 4.800 satır
+- [En az %90 skorlu yanlış tahminler](../../performance_analysis/high_confidence_errors.csv)
+- [Örtüşme çiftleri, benzerlik ölçüleri ve etiket uyuşmazlıkları](../../performance_analysis/overlap_pairs.csv)

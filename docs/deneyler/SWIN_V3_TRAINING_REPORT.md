@@ -47,9 +47,9 @@ Yerel confusion matrix, satırlar gerçek etiketi ve sütunlar tahmini gösterec
  [  0,  1,  0,399]]
 ```
 
-- [Eğitim eğrileri](results/swin_v3/finetuning/local_run/training_curves.png) · [Karşılaştırmalı matrisler](results/swin_v3/finetuning/local_run/confusion_comparison.png)
-- [Deney kaydı](results/swin_v3/finetuning/local_run/metrics.json) · [Metrik karşılaştırması](results/swin_v3/finetuning/local_run/comparison.csv) · [Sınıflandırma raporu](results/swin_v3/finetuning/local_run/classification_report.csv)
-- [Checkpoint doğrulaması](results/swin_v3/finetuning/local_run/checkpoint_verification.json) · [SAM ve Grad-CAM denetimi](results/swin_v3/finetuning/local_run/segmentation_checks.json)
+- [Eğitim eğrileri](../../results/swin_v3/finetuning/local_run/training_curves.png) · [Karşılaştırmalı matrisler](../../results/swin_v3/finetuning/local_run/confusion_comparison.png)
+- [Deney kaydı](../../results/swin_v3/finetuning/local_run/metrics.json) · [Metrik karşılaştırması](../../results/swin_v3/finetuning/local_run/comparison.csv) · [Sınıflandırma raporu](../../results/swin_v3/finetuning/local_run/classification_report.csv)
+- [Checkpoint doğrulaması](../../results/swin_v3/finetuning/local_run/checkpoint_verification.json) · [SAM ve Grad-CAM denetimi](../../results/swin_v3/finetuning/local_run/segmentation_checks.json)
 
 ## Web ve segmentasyon doğrulaması
 

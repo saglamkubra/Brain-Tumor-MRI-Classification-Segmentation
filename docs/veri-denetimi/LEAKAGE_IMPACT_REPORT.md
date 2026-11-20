@@ -6,7 +6,7 @@
 
 ## Karşılaştırma yöntemi
 
-- Önceki çalıştırmada CNN, ViT ve Swin-Tiny checkpoint’lerinden kaydedilen **4.800 gerçek tahmin** kullanıldı. Üç modelin aynı 1.600 test yolunu kullandığı ve kaydedilen sınıfın en yüksek softmax bileşenine karşılık geldiği doğrulandı. Tam test metrikleri tekrar hesaplandı ve [önceki raporla](MODEL_PERFORMANCE_ANALYSIS.md) uyumu kontrol edildi. Yeni çıkarım veya eğitim yapılmadı.
+- Önceki çalıştırmada CNN, ViT ve Swin-Tiny checkpoint’lerinden kaydedilen **4.800 gerçek tahmin** kullanıldı. Üç modelin aynı 1.600 test yolunu kullandığı ve kaydedilen sınıfın en yüksek softmax bileşenine karşılık geldiği doğrulandı. Tam test metrikleri tekrar hesaplandı ve [önceki raporla](../deneyler/MODEL_PERFORMANCE_ANALYSIS.md) uyumu kontrol edildi. Yeni çıkarım veya eğitim yapılmadı.
 - Yerel ZIP içinden çözümlenmiş RGB pikselleri ve görüntü boyutu SHA‑256 ile yeniden karşılaştırıldı. Birleşik `Training/` klasöründe, yani eğitim ve doğrulamanın oluşturulduğu 5.600 görüntülük kaynakta, kesin eşi bulunan **114 benzersiz test görüntüsü** değerlendirme listesinden çıkarıldı. Swin notebook’undan yeniden oluşturulan ayrımda bunlar 94 eğitim–test ve 27 doğrulama–test **çiftine** karşılık geliyor. Bazı test görüntülerinin birden fazla eşi var. Yalnızca yeniden oluşturulmuş 4.480 eğitim görüntüsünü kullanmak aynı 114’lü listeyi vermez. Özgün bölme CSV’leri yerelde bulunmadı. [Eşleşme denetimi](DATA_LEAKAGE_AUDIT.md)
 - Yalnızca pHash adayı olan **323 ek test görüntüsü** alt kümede kaldı. Test içi tekrarlar için ayrıca bir çıkarma yapılmadı. Veri dosyaları silinmedi veya taşınmadı.
 
@@ -100,11 +100,11 @@ Satırlar gerçek etiket, sütunlar model tahmini. Her hücre tam test → 1.486
 
 ## Grafikler
 
-![Beş genel metrikte yüzde puan farkları](leakage_impact/metric_deltas.png)
+![Beş genel metrikte yüzde puan farkları](../../leakage_impact/metric_deltas.png)
 
-![Üç model için orijinal ve alt küme sınıf F1 değerleri](leakage_impact/class_f1_comparison.png)
+![Üç model için orijinal ve alt küme sınıf F1 değerleri](../../leakage_impact/class_f1_comparison.png)
 
-![Tam test ve alt küme için altı karmaşıklık matrisi](leakage_impact/confusion_comparison.png)
+![Tam test ve alt küme için altı karmaşıklık matrisi](../../leakage_impact/confusion_comparison.png)
 
 ## Sonuçların yorumu
 
