@@ -21,7 +21,7 @@
 
 [Rapor dizini](docs/README.md) · [Deney grafikleri ve görselli raporlar](results/README.md)
 
-- **Yerel uygulama (Windows):** Uygun Python ortamı ve model checkpoint'leri hazırsa `start.bat` dosyasını çalıştırın. Ayrıntılar için [kurulum](#9-kurulum-ve-çalıştırma) bölümüne bakın.
+- **Yerel uygulama (Windows):** Uygun Python ortamı ve model checkpoint'leri hazırsa `start.bat --port 8011` komutunu çalıştırın. Ayrıntılar için [kurulum](#9-kurulum-ve-çalıştırma) bölümüne bakın.
 - **CNN:** [CNN sonuçları](#51-cnn-sınıflandırma-sonuçları), [CNN eğitim ve değerlendirme görselleri](#61-cnn--seçilmiş-analiz-görselleri) ve modelin [Python kullanımı](#95-cnn-python-çıkarımı).
 - **Swin Transformer eğitim/deneyleri:** [Colab notebook'u](https://colab.research.google.com/github/saglamkubra/Brain-Tumor-MRI-Classification-Segmentation/blob/main/notebooks/Swin_Tiny_V3_FineTuning_Colab.ipynb) ve [deney klasörü](experiments/swin_v3/).
 - **Grad-CAM ve SAM:** Model açıklama haritaları ile otomatik ve manuel segmentasyon deneyleri [görsel analizler](#6-deney-görselleri) bölümünde sunulmuştur.
@@ -38,7 +38,7 @@
 | Kontrastla aday bölge | Gri ton dönüşümü, Gauss bulanıklaştırma, morfolojik kapama ve erozyon, bağlı bileşen analizi | [Kontrastla kutu üretimi](backend/lesion_candidate.py) |
 | Grad-CAM | Hedef sınıf logitinin gradyanıyla aktivasyon kanallarını ağırlıklandırma, pozitif haritayı ölçekleme ve değişken görünümlerle yumuşatma | [Swin ve SAM notebook’u](notebooks/Swin_Transformer_SAM.ipynb) · [Aşama 3 katman karşılaştırması](results/gradcam_diagnostics/summary_asama3.md) |
 | SAM ViT-B | Grad-CAM’den veya manuel kutudan maske adayları, kutu ve maskenin aynı önizlemeye geri izdüşümü | [Otomatik ve manuel SAM örnekleri](results/swin_v3/swin_sam_grafikleri/11_sam_otomatik_manuel_kutu.png) |
-| Bölge müdahalesi | Ortalama gri veya Gauss dolgusu ve aynı alanlı, sabit tohumlu rastgele kontrol. CNN ve Swin yeniden çalıştırılarak skor ve logit marjı karşılaştırılır | [Müdahale kodu](backend/explanation_lab.py) · [Güncel arayüz raporu](results/NEURO_AI_LAB_7_duzeltme_raporu.pdf) |
+| Bölge müdahalesi | Ortalama gri veya Gauss dolgusu ve aynı alanlı, sabit tohumlu rastgele kontrol. CNN ve Swin yeniden çalıştırılarak skor ve logit marjı karşılaştırılır | [Müdahale kodu](backend/explanation_lab.py) · [Arayüz doğrulama görselleri](results/explanation_ui_validation/) |
 
 Aşama 3 varsayılanı `layers[2]`. Notebook grafikleri son bloğun `norm1` çıkışını kullanır. Uygulamadaki varsayılan seçimi, seçilmiş örneklerde tek gözlemcili görsel incelemeye dayanır. Referans maske ve anatomik isabet oranı yoktur. [Görsel karşılaştırma](results/gradcam_diagnostics/stage3_gorsel_karsilastirma/ozet.md)
 
@@ -177,15 +177,18 @@ CNN'in sınıf bazlı precision, recall ve F1 değerleri burada ayrıca verilmem
 
 ### 5.2 CNN ve Swin Transformer sonuçlarına genel bakış
 
-| Metrik | CNN | Swin Transformer (ilk V3 değerlendirmesi) |
-|---|---:|---:|
-| Test accuracy | **%89,61** | **%93,86** |
-| Macro precision | %91,06 | — |
-| Macro recall | %89,49 | — |
-| Macro F1-score | %89,55 | — |
-| Glioma recall | — | %82,77 |
+İki model aynı **1.579 görüntülük V3 test listesinde** değerlendirildi. [Kayıtlı metrikler ve matrisler](results/web_v3_performance.json)
 
-> **Karşılaştırma notu:** CNN ve Swin sonuçlarının aynı test örnekleri üzerinde hesaplandığı doğrulanmadığından, tabloda gösterilen değerler doğrudan adil bir mimari üstünlük karşılaştırması değildir. `—` doğrulanmış değer sağlanmadığını belirtir.
+| Metrik | CNN V2 | Swin-Tiny V3 |
+|---|---:|---:|
+| Doğruluk | %89,61 | %93,86 |
+| Makro kesinlik | %91,06 | %94,54 |
+| Makro duyarlılık | %89,49 | %93,74 |
+| Makro F1 | %89,55 | %93,79 |
+| Glioma duyarlılığı | %80,94 | %82,77 |
+| Tümör olup tümör yok denen | 119/1.179 (%10,1) | 71/1.179 (%6,0) |
+
+Hasta düzeyinde bağımsızlık doğrulanmadı. Ağırlıklar ve eğitim koşulları farklıdır. 1.600 görüntülük ilk testin sonuçları ayrı bir deney olarak okunmalıdır. İlk CNN testinde doğruluk %76,75 ve glioma duyarlılığı %55,00 idi. [İlk test raporu](docs/deneyler/MODEL_PERFORMANCE_ANALYSIS.md)
 
 ### 5.3 Swin Transformer eğitim deneyleri
 
@@ -310,15 +313,17 @@ Bu nedenle otomatik kutu ve SAM çıktıları **araştırma amaçlı görsel ön
 
 ## 8. Proje dosya yapısı
 
-Aşağıdaki yapı, önceki README'de belgelenen proje düzenini özetler; güncel depoda dosyaların varlığı ayrıca kontrol edilmelidir.
+Güncel yapı ve giriş noktaları:
 
 ```text
+Data_Preprocessing/     Veri hazırlama notebook’u ve grafikleri
+docs/                   Uygulama, deney ve veri denetimi raporları
 backend/                FastAPI ve model servisleri
 frontend/               Yerel web arayüzü
 notebooks/              Model eğitimleri ve araştırma notebook'ları
 experiments/swin_v3/    Swin ek eğitim ve değerlendirme kodları
 results/                Grafikler ve deney çıktıları
-tests/                  API testleri
+tests/                  Birim ve gerçek MR uçtan uca testleri
 models/                 Yerel checkpoint dosyaları (GitHub'a yüklenmez)
 start.bat               Windows başlatıcısı
 requirements.txt        Python bağımlılıkları
@@ -390,7 +395,7 @@ Arayüz CNN ve Swin tahminlerini, Grad-CAM ve otomatik veya manuel SAM görselle
 | `POST /model-inputs` · `POST /intervene` | Gerçek model girişleri ve müdahale sonucu |
 | `GET /performance` · `GET /research` · `POST /report` | Kayıtlı test metrikleri, gerçek PubMed kayıtları ve PDF |
 
-[Test raporu](docs/uygulama/WEB_TEST_REPORT.md) · [Gerçek MR ile ekranlar](results/NEURO_AI_LAB_uygulama_ekranlari.pdf) · [Son doğrulama ve önce/sonra görselleri](results/NEURO_AI_LAB_7_duzeltme_raporu.pdf)
+[Test raporu](docs/uygulama/WEB_TEST_REPORT.md) · [Gerçek MR ile ekranlar](results/NEURO_AI_LAB_uygulama_ekranlari.pdf)
 
 ## 11. Google Drive ve model dosyaları
 
@@ -427,10 +432,11 @@ Google Drive, model checkpoint'leri, deney sonuçları ve büyük araştırma do
 - [x] Grad-CAM deneylerinin gerçekleştirilmesi
 - [x] SAM ile otomatik ve manuel segmentasyon deneylerinin yapılması
 - [x] Model performans grafiklerinin hazırlanması
-- [ ] CNN + Swin + SAM güncel web entegrasyonunun uçtan uca doğrulanması
-- [ ] PubMed makale entegrasyonunun tamamlanması
-- [ ] PDF analiz raporunun tamamlanması
-- [ ] Son sunum ve tüm dosya bağlantılarının kontrolü
+- [x] CNN + Swin + SAM güncel web entegrasyonunun uçtan uca doğrulanması
+- [x] PubMed makale entegrasyonunun tamamlanması
+- [x] PDF analiz raporunun tamamlanması
+
+Son yayımlama kopyasında 13 birim testi ve gerçek MR smoke testi geçti. [Uygulama doğrulama raporları](docs/uygulama/)
 
 ---
 
