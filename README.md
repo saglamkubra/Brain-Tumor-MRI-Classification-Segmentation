@@ -10,18 +10,18 @@
 ![Backend](https://img.shields.io/badge/Backend-FastAPI-009688?style=flat-square)
 ![Research](https://img.shields.io/badge/Kullanım-Akademik%20Araştırma-6D5DFB?style=flat-square)
 
-[Görüntü işleme](#görüntü-işleme-hattı) · [Proje](#1-projenin-amacı) · [Modeller](#4-kullanılan-modeller) · [Sonuçlar](#5-model-performansları) · [Grafikler](#6-deney-görselleri) · [Kurulum](#9-kurulum-ve-çalıştırma) · [Google Drive](#11-google-drive-ve-model-dosyaları)
+**[Görüntü işleme hattı](#görüntü-işleme-hattı) · [Kurulum ve çalıştırma](#9-kurulum-ve-çalıştırma) · [Deney sonuçları](#5-model-performansları) · [Deney görselleri](#6-deney-görselleri)**
 
 </div>
 
 > [!IMPORTANT]
-> Bu proje yalnızca **eğitim ve akademik araştırma** amacıyla geliştirilmiştir. Klinik tanı, tarama veya tedavi aracı değildir. Model skorları kalibre edilmiş tıbbi olasılıklar değildir; Grad-CAM haritaları ve SAM maskeleri uzman tarafından doğrulanmış tümör sınırları değildir.
+> Bu proje yalnızca **eğitim ve akademik araştırma** amacıyla geliştirilmiştir. Klinik tanı, tarama veya tedavi aracı değildir. Model skorları kalibre edilmiş tıbbi olasılıklar değildir; Hasta düzeyinde veri ayrımı doğrulanmamıştır. Grad-CAM haritaları modelin kararına katkıyı görselleştirir. SAM maskelerinin doğruluğu uzman referans maskeleriyle ölçülmemiştir.
 
 ## Hızlı başlangıç
 
 [Rapor dizini](docs/README.md) · [Deney grafikleri ve görselli raporlar](results/README.md)
 
-- **Yerel uygulama (Windows):** Uygun Python ortamı ve model checkpoint'leri hazırsa `start.bat --port 8011` komutunu çalıştırın. Ayrıntılar için [kurulum](#9-kurulum-ve-çalıştırma) bölümüne bakın.
+- **Yerel uygulama (Windows):** Model dosyaları hazırsa `start.bat` dosyasına çift tıklayın veya PowerShell’de `.\start.bat` çalıştırın. Uygulama [127.0.0.1:8011](http://127.0.0.1:8011/) adresini açar. Ayrıntılar için [kurulum](#9-kurulum-ve-çalıştırma) bölümüne bakın.
 - **CNN:** [CNN sonuçları](#51-cnn-sınıflandırma-sonuçları), [CNN eğitim ve değerlendirme görselleri](#61-cnn--seçilmiş-analiz-görselleri) ve modelin [Python kullanımı](#95-cnn-python-çıkarımı).
 - **Swin Transformer eğitim/deneyleri:** [Colab notebook'u](https://colab.research.google.com/github/saglamkubra/Brain-Tumor-MRI-Classification-Segmentation/blob/main/notebooks/Swin_Tiny_V3_FineTuning_Colab.ipynb) ve [deney klasörü](experiments/swin_v3/).
 - **Grad-CAM ve SAM:** Model açıklama haritaları ile otomatik ve manuel segmentasyon deneyleri [görsel analizler](#6-deney-görselleri) bölümünde sunulmuştur.
@@ -365,10 +365,10 @@ CNN paketi yüklenirken SHA-256 ve model yapılandırması kontrol edilir. Ağı
 ### 9.4 Yerel web uygulaması
 
 ```powershell
-.\start.bat --port 8011
+.\start.bat
 ```
 
-[Uygulama](http://127.0.0.1:8011/) ve [model durumu](http://127.0.0.1:8011/health) aynı bilgisayardan açılır. CUDA varsa GPU, aksi halde CPU kullanılır.
+[Uygulama](http://127.0.0.1:8011/) ve [model durumu](http://127.0.0.1:8011/health) aynı bilgisayardan açılır. Farklı bir port için örneğin `.\start.bat --port 8012` kullanın. CUDA varsa GPU, aksi halde CPU kullanılır.
 
 Notebook katmanını denemek için aynı PowerShell oturumunda `$env:NEURO_SWIN_STAGE3_TARGET='block_norm1'` ayarlayıp sunucuyu yeniden başlatın. Varsayılan aşama çıkışına dönmek için `Remove-Item Env:NEURO_SWIN_STAGE3_TARGET -ErrorAction SilentlyContinue` çalıştırıp yeniden başlatın.
 

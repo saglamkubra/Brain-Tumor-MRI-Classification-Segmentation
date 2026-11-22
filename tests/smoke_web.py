@@ -36,7 +36,7 @@ def image_result(uri):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("dataset")
-    parser.add_argument("--root", default="http://127.0.0.1:8000")
+    parser.add_argument("--root", default="http://127.0.0.1:8011")
     parser.add_argument("--device", default="cuda", choices=["cuda", "cpu"])
     parser.add_argument('--pubmed', action='store_true', help='Check the live PubMed service (internet required).')
     args = parser.parse_args()
