@@ -387,6 +387,8 @@ print(result)
 
 Arayüz CNN ve Swin tahminlerini, Grad-CAM ve otomatik veya manuel SAM görsellerini, gerçek deney metriklerini ve grafiklerini gösterir. Eşzamanlı görüntüleyici aynı önizleme koordinatlarında katman karşılaştırması yapar. Açıklamayı sına bölümü gerçek model girişlerini ve bölge müdahalelerini gösterir. PubMed’e sınıf ve arama terimi gönderilir. PDF raporu analiz sonuçlarını ve seçilen görselleri içerir.
 
+Modelin gördüğü bölümünü açınca CNN ve Swin giriş görselleri otomatik yüklenir. Müdahale deneyinde çizilen kutunun rastgele kontrolü aynı sayıda pikseli kutuyla kesişmeden gizler. Kullanılan konum özgün MR piksel koordinatlarıyla gösterilir. Manuel SAM, kutu eksik veya geçersiz olduğunda yönlendirme gösterir. Arayüz ve PDF, Türkçe ve İngilizce sayı biçimlerini kullanır.
+
 | Uç nokta | İşlev |
 | --- | --- |
 | `GET /health` | Yüklenen modeller, cihaz ve aktif Swin hedefi |
@@ -436,7 +438,7 @@ Google Drive, model checkpoint'leri, deney sonuçları ve büyük araştırma do
 - [x] PubMed makale entegrasyonunun tamamlanması
 - [x] PDF analiz raporunun tamamlanması
 
-Son yayımlama kopyasında 13 birim testi ve gerçek MR smoke testi geçti. [Uygulama doğrulama raporları](docs/uygulama/)
+Son yerel doğrulamada 15 birim testi ve gerçek MR smoke testi geçti. [Uygulama doğrulama raporları](docs/uygulama/)
 
 ---
 

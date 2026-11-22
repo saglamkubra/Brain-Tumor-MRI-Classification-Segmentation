@@ -220,6 +220,7 @@ function resetExplanation() {
     void preview.decode().then(()=>{if(current===generation) paintLab();}).catch(()=>{});
   }
   renderPipeline();
+  if (image && lab.open) void loadModelInputs();
 }
 function renderPipeline() {
   const grid=$("lab-pipeline");
@@ -244,7 +245,7 @@ function renderPipeline() {
   step("Swin girişi","224 × 224 RGB tensör, gösterim için 0–255 aralığına ölçeklendi.",inputImages.find(i=>i.model==="Swin-Tiny")?.image);
   const scores=step("Model skorları","Her modelin özgün MR üzerinde seçtiği sınıf ve softmax skoru gösterilir.");
   for (const p of analysis.predictions)
-    element("p",p.model+" · "+translatedText(labels[p.class])+" · "+pct(p.probabilities[p.class]),scores);
+    element("p",p.model+" · "+translatedText(labels[p.class])+" · "+predictionPct(p.probabilities[p.class]),scores);
   const cam=$("stage").value==="4" ? visual.gradcam4 : visual.gradcam;
   step("Grad-CAM","Seçili aşamanın sınıf kararına katkı haritası.",cam?.image);
   const boxStep=step("Kutu","Mevcut otomatik SAM kutusu önizleme koordinatlarındadır.",candidateBox ? visual.original.image : null);
@@ -258,10 +259,16 @@ function renderPipeline() {
   }
   step("SAM","Son otomatik SAM çıktısı, varsa aday maskeyi gösterir.",visual.auto?.layer ? visual.auto.image : null);
 }
-lab.addEventListener("toggle",()=>{if(lab.open) renderPipeline();});
+lab.addEventListener("toggle",()=>{
+  if (!lab.open) return;
+  renderPipeline();
+  if (!inputImages.length) void loadModelInputs();
+});
 $("stage").addEventListener("change",()=>{if(lab.open) renderPipeline();});
 $("language").addEventListener("change",()=>{if(lab.open) renderPipeline(); if(lastIntervention) showIntervention(lastIntervention);});
-$("lab-inputs").onclick=async()=>{
+$("lab-inputs").onclick=loadModelInputs;
+async function loadModelInputs() {
+  if (!image || $("lab-inputs").disabled) return;
   const current=generation;
   $("lab-inputs").disabled=true;
   status("lab-input","İşleniyor…");
@@ -276,7 +283,7 @@ $("lab-inputs").onclick=async()=>{
   } finally {
     if(current===generation) labEnable([$("lab-inputs")]);
   }
-};
+}
 function labPoint(evt) {
   const rect=labCanvas.getBoundingClientRect();
   return [Math.max(0,Math.min(224,Math.round(224*(evt.clientX-rect.left)/rect.width))),
@@ -312,6 +319,11 @@ function showIntervention(data) {
   grid.replaceChildren();
   const fraction=element("p",null,grid,"lab-area");
   fraction.textContent=translatedText("Gizlenen alan")+ " · "+pct(data.pixels/data.total);
+  if (randomControl?.region) {
+    const location=element("p",null,grid,"muted");
+    location.textContent=translatedText("Rastgele kontrol konumu (özgün MR pikselleri)")+
+      " · " + randomControl.region.join(", ");
+  }
   const cards=element("div",null,grid,"lab-grid");
   for(const p of data.results) {
     const card=element("article",null,cards,"panel");

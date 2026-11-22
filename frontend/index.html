@@ -32,7 +32,7 @@
 <p id="test-context" class="muted" data-i18n hidden>İki model aynı 1.579 görüntülük test kümesi üzerinde raporlanmıştır (veri_bolunmesi_v3). Mimariler ve eğitim koşulları farklıdır; bu değerler doğrudan üstünlük anlamına gelmez. Hasta düzeyinde veri ayrımı doğrulanmamıştır.</p><p class="muted" data-i18n>Test doğruluğu, modelin ilgili test kümesinde doğru sınıflandırdığı görüntülerin oranıdır. Model skoru, sınıflandırıcının bu görüntüde bir sınıfa verdiği puandır. Tek görüntüdeki yüksek skor klinik risk veya test doğruluğu göstermez.</p>
 </section>
 <section id="gorsel"><h2 data-i18n>Grad-CAM ve SAM</h2>
-<div class="panel controls"><label>Gösterilen Grad-CAM aşaması<select id="stage"><option value="3" data-i18n>Aşama 3</option><option value="4" data-i18n>Aşama 4</option></select></label>
+<div class="panel controls"><label><span data-i18n>Gösterilen Grad-CAM aşaması</span><select id="stage"><option value="3" data-i18n>Aşama 3</option><option value="4" data-i18n>Aşama 4</option></select></label>
 <button id="cam" aria-pressed="false" disabled>Aşama 3 ve 4 karşılaştırması</button><button id="cnn-cam" data-i18n disabled>CNN Grad-CAM göster</button><button id="auto" disabled data-i18n>Otomatik SAM</button>
 <label class="fallback-option"><input type="checkbox" id="allow-fallback"><span data-i18n> Kutu bulunamazsa diğer aşamayı dene</span></label>
 <button id="intensity" disabled data-i18n>Kontrastla aday ara</button>
@@ -40,12 +40,12 @@
 <label>SAM maskesi görünürlüğü <output id="sam-level" for="sam-opacity">%68</output><input id="sam-opacity" type="range" min="0" max="100" value="68" disabled></label></div>
 <p class="muted" data-i18n>Grad-CAM, Swin kararına katkıda bulunan alanları yaklaşık olarak gösterir. Manuel SAM için orijinal MR üzerinde bir kutu çizin. Maskeler aday bölgeleri gösterir ve tümör sınırı doğrulaması yapılmamıştır.</p>
 <div class="grid four mr-panels">
-<article class="panel"><h3 data-i18n>Orijinal MR</h3><canvas width="224" height="224" id="drawing" tabindex="0" aria-describedby="manual-adjust-help" aria-label="MR görüntüsünde kutu çizme alanı"></canvas><button class="viewer-trigger" id="open-viewer" type="button" disabled data-i18n>Büyük karşılaştır</button><div class="manual-tools"><label for="prompt-mode">İşaretleme</label>
+<article class="panel"><h3 data-i18n>Orijinal MR</h3><canvas width="224" height="224" id="drawing" tabindex="0" aria-describedby="manual-adjust-help" aria-label="MR görüntüsünde kutu çizme alanı"></canvas><button class="viewer-trigger" id="open-viewer" type="button" disabled data-i18n>Büyük karşılaştır</button><div class="manual-tools"><label for="prompt-mode" data-i18n>İşaretleme</label>
 <select id="prompt-mode"><option value="box" data-i18n>Kutu çiz</option><option value="1" data-i18n>Dahil et (+)</option><option value="0" data-i18n>Çıkar (−)</option></select>
 <button id="clear-points" type="button" data-i18n>Noktaları temizle</button>
 <button id="clear-box" type="button" data-i18n>Kutuyu temizle</button>
-<button id="manual" disabled data-i18n>Maskeyi üret</button></div><small id="manual-adjust-help">Ok tuşları kutuyu taşır. Shift + ok tuşu sağ veya alt kenarı ayarlar. Kutuyu çizdikten sonra bölge içine +, maske dışına çıkarmak istediğiniz alanlara − işareti koyun.</small></article>
-<article class="panel"><h3>Grad-CAM</h3><div class="grid cam-pair" id="cam-pair"><div id="cam-stage-3"><div class="frame"><img alt="" id="cam-base"><img alt="Grad-CAM aşama 3" id="cam-image"></div></div><div id="cam-stage-4" hidden><div class="frame"><img alt="" id="cam4-base"><img alt="Grad-CAM aşama 4" id="cam4-image"></div></div></div><div id="cnn-cam-panel" hidden><div class="frame"><img id="cnn-cam-base" alt=""><img id="cnn-cam-image" alt="CNN Grad-CAM"></div></div><p id="cam-status" role="status"></p><small>Parlak tonlar, bu aşamada sınıf kararına daha güçlü katkıyı gösterir. Her aşamada, yatay çevirmeli ve çevirmesiz girişlerin farklı yoğunluk ölçeklerinde hesaplanan Grad-CAM sonuçları ortalanır.</small><small id="stage3-explanation" data-i18n></small><p><small data-i18n>Seçilmiş örneklerde tek gözlemcili görsel incelemeye dayanır; referans maske ve isabet oranı yoktur.</small></p><details class="cam-technical"><summary data-i18n>Teknik ayrıntı</summary><small id="stage3-target" data-i18n></small></details></article>
+<button id="manual" disabled data-i18n>Maskeyi üret</button></div><small id="manual-adjust-help" data-i18n>Ok tuşları kutuyu taşır. Shift + ok tuşu sağ veya alt kenarı ayarlar. Kutuyu çizdikten sonra bölge içine +, maske dışına çıkarmak istediğiniz alanlara − işareti koyun.</small></article>
+<article class="panel"><h3>Grad-CAM</h3><div class="grid cam-pair" id="cam-pair"><div id="cam-stage-3"><div class="frame"><img alt="" id="cam-base"><img alt="Grad-CAM aşama 3" id="cam-image"></div></div><div id="cam-stage-4" hidden><div class="frame"><img alt="" id="cam4-base"><img alt="Grad-CAM aşama 4" id="cam4-image"></div></div></div><div id="cnn-cam-panel" hidden><div class="frame"><img id="cnn-cam-base" alt=""><img id="cnn-cam-image" alt="CNN Grad-CAM"></div></div><p id="cam-status" role="status"></p><small data-i18n>Parlak tonlar, bu aşamada sınıf kararına daha güçlü katkıyı gösterir. Her aşamada, yatay çevirmeli ve çevirmesiz girişlerin farklı yoğunluk ölçeklerinde hesaplanan Grad-CAM sonuçları ortalanır.</small><small id="stage3-explanation" data-i18n></small><p><small data-i18n>Seçilmiş örneklerde tek gözlemcili görsel incelemeye dayanır; referans maske ve isabet oranı yoktur.</small></p><details class="cam-technical"><summary data-i18n>Teknik ayrıntı</summary><small id="stage3-target" data-i18n></small></details></article>
 <article class="panel" id="sam-panel"><h3 data-i18n>Otomatik SAM</h3><div class="frame"><img alt="" id="auto-base"><canvas class="mask" width="224" height="224" id="auto-image" aria-hidden="true"></canvas><div id="auto-box" class="bounds" hidden></div></div><p id="auto-status" role="status"></p><button id="use-candidate" type="button" hidden data-i18n>Kutuyu manuel alana aktar</button></article>
 <article class="panel"><h3 data-i18n>Manuel SAM</h3><div class="frame"><img alt="" id="manual-base"><canvas class="mask" width="224" height="224" id="manual-image" aria-hidden="true"></canvas><div id="manual-box" class="bounds" hidden></div><p id="manual-empty" data-i18n>Kutu çizip 'Maskeyi üret'e basın.</p></div><p id="manual-status" role="status"></p></article>
 </div>
@@ -65,13 +65,12 @@
 <details id="explanation-lab" class="panel">
 <summary data-i18n>Açıklamayı sına</summary>
 <h3 data-i18n>Modelin gördüğü</h3>
-<button id="lab-inputs" type="button" disabled data-i18n>Model girişlerini göster</button>
+<button id="lab-inputs" type="button" disabled data-i18n>CNN ve Swin giriş görsellerini yükle</button>
 <p id="lab-input-status" role="status"></p>
 <div id="lab-pipeline" class="lab-grid"></div>
-<h3 data-i18n>Müdahale deneyi</h3><p data-i18n>Tek görüntü üzerinde yapılan bir hipotez testidir; genel sonuç değildir.</p>
-<p data-i18n>Bu bir hipotez testidir. Dolgu, eğitim dışı bir görüntü yaratabilir; sonuç nedensellik kanıtı değildir.</p>
+<h3 data-i18n>Müdahale deneyi</h3><p data-i18n>MR’ın bir bölgesini gizleyip aynı görüntüyü modellere tekrar verirsiniz. Önce ve sonra çubukları, her modelin ilk seçtiği sınıfa verdiği skorun bu değişiklikten nasıl etkilendiğini gösterir.</p><p data-i18n>Tek görüntü üzerinde yapılan bir hipotez testidir; genel sonuç değildir. Dolgu eğitim dışı bir görüntü yaratabilir ve sonuç nedensellik kanıtı değildir.</p>
 <p data-i18n>MR üzerinde bir dikdörtgen sürükleyin. Klavyeyle kutu girmek için x1, y1, x2, y2 alanını kullanın.</p>
-<div class="lab-grid">
+<div class="lab-grid lab-previews">
 <canvas id="lab-canvas" width="224" height="224" hidden></canvas>
 <img id="lab-altered" hidden width="224" height="224" alt="">
 </div>

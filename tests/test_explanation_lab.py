@@ -69,3 +69,18 @@ class InterventionTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(int(control.sum()), int(primary.sum()))
         self.assertEqual(int(control.sum()), 880)
         np.testing.assert_array_equal(control, region_mask(None, image, "random", box, 3))
+
+    def test_random_control_never_crosses_primary_box_across_seeds(self):
+        width, height = 80, 60
+        box = (10, 13, 59, 39)
+        count = (box[2]-box[0])*(box[3]-box[1])
+        for seed in range(20):
+            indices = random_pixels(width, height, count, exclude=box, seed=seed)
+            self.assertEqual(len(np.unique(indices)), count)
+            y, x = np.divmod(indices, width)
+            self.assertFalse(((x >= box[0]) & (x < box[2]) &
+                              (y >= box[1]) & (y < box[3])).any())
+
+    def test_random_control_reports_no_available_patch(self):
+        with self.assertRaisesRegex(ValueError, "kontrol yaması bulunamadı"):
+            random_pixels(80, 60, 1800, exclude=(10, 15, 70, 45))

@@ -40,13 +40,23 @@ def validate_box(image, value):
     return tuple(map(int, np.r_[np.floor(native[0]), np.ceil(native[1])]))
 
 
-def random_pixels(width, height, count):
+def random_pixels(width, height, count, exclude=None, seed=RANDOM_SEED):
     """Return a connected patch of exactly count pixels at a seeded position."""
-    rng = np.random.default_rng(RANDOM_SEED)
-    cols = min(width, max(math.ceil(count / height), round(math.sqrt(count * width / height))))
+    rng = np.random.default_rng(seed)
+    regions = [(0, 0, width, height)]
+    if exclude is not None:
+        x, y, right, bottom = exclude
+        regions = [(0, 0, width, y), (0, bottom, width, height-bottom),
+                   (0, 0, x, height), (right, 0, width-right, height)]
+    fits = [region for region in regions if region[2]*region[3] >= count]
+    if not fits:
+        raise ValueError("Kesişmeyen aynı alanlı bir kontrol yaması bulunamadı.")
+    left, top, available_width, available_height = fits[int(rng.integers(len(fits)))]
+    cols = min(available_width, max(math.ceil(count / available_height),
+               round(math.sqrt(count * available_width / available_height))))
     rows = math.ceil(count / cols)
-    left = int(rng.integers(width - cols + 1))
-    top = int(rng.integers(height - rows + 1))
+    left += int(rng.integers(available_width - cols + 1))
+    top += int(rng.integers(available_height - rows + 1))
     offsets = np.arange(count)
     return (top + offsets // cols) * width + left + offsets % cols
 
@@ -62,7 +72,7 @@ def region_mask(models, image, mode, box, stage):
             if box is not None:
                 x, y, X, Y = box
                 count = (X-x)*(Y-y)
-            indices = random_pixels(image.width, image.height, count)
+            indices = random_pixels(image.width, image.height, count, exclude=box)
         else:
             _, cam, _, _, _ = explain(models, image, sam_image(image), stage)
             x, y, w, h = PreviewGeometry(*image.size).rect
@@ -104,4 +114,9 @@ def intervention(models, image, mode, fill, box, stage):
 
         values, device = models.run(name, infer)
         results.append(dict(model=name, device=device, **values))
-    return dict(results=results, preview=png(sam_image(modified)), pixels=int(mask.sum()), total=int(mask.size))
+    response = dict(results=results, preview=png(sam_image(modified)), pixels=int(mask.sum()), total=int(mask.size))
+    if mode == "random":
+        ys = np.flatnonzero(mask.any(axis=1))
+        xs = np.flatnonzero(mask.any(axis=0))
+        response["region"] = [int(xs[0]), int(ys[0]), int(xs[-1]+1), int(ys[-1]+1)]
+    return response

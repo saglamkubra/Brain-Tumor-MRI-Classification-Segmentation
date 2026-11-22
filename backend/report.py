@@ -24,11 +24,11 @@ PREFIX = "data:image/png;base64,"
 
 
 def format_probability(value, language):
-    if value >= 0.99995:
+    if value >= 0.99995 and value != 1:
         return message("%99,99 ve üzeri", language)
     if value < 0.00005:
         return message("%0,01 altı", language)
-    number = f"{value*100:.2f}".rstrip("0").rstrip(".")
+    number = "100" if value == 1 else f"{value*100:.2f}"
     return number + "%" if language == "en" else "%" + number.replace(".", ",")
 
 

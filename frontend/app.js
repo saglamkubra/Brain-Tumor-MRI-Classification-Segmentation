@@ -3,6 +3,7 @@ const $ = id => document.getElementById(id);
 let messages = {};
 const localeReady = fetch("/assets/messages.json").then(response => response.json()).then(data => { messages = data; }).catch(() => {});
 function translatedText(text) {
+  if (typeof text === "function") return text();
   if (document.documentElement.lang !== "en" || typeof text !== "string") return text;
   if (Object.hasOwn(messages,text)) return messages[text];
   const prefix = Object.keys(messages).find(key => key.endsWith(" ") && text.startsWith(key));
@@ -14,11 +15,11 @@ function putText(node, text) {
   node.textContent = translatedText(text);
 }
 const labels = {glioma:"Glioma",meningioma:"Meningioma",notumor:"Tümör yok",pituitary:"Hipofiz tümörü"};
-function pct(value, {prediction=false, digits=2, minimum=0}={}) {
-  if (prediction && value >= 0.99995) return translatedText("%99,99 ve üzeri");
+function pct(value, {prediction=false, digits=2, minimum=digits}={}) {
+  if (prediction && value >= 0.99995 && value !== 1) return translatedText("%99,99 ve üzeri");
   if (prediction && value < 0.00005) return translatedText("%0,01 altı");
   const lang=document.documentElement.lang;
-  const number=(value*100).toLocaleString(lang,{maximumFractionDigits:digits,minimumFractionDigits:minimum});
+  const number=(value*100).toLocaleString(lang,{maximumFractionDigits:digits,minimumFractionDigits:value===1 ? 0 : minimum});
   return lang==="en" ? number+"%" : "%"+number;
 }
 const predictionPct = value => pct(value,{prediction:true});
@@ -51,10 +52,11 @@ let prompts = [];
 let candidateBox = null;
 const performanceByCheckpoint = new Map();
 const canvas = $("drawing"), ctx = canvas.getContext("2d");
+const validManualBox = () => Boolean(box && box[2]-box[0]>=4 && box[3]-box[1]>=4);
 function paint() {
   ctx.clearRect(0,0,224,224);
   if (preview?.complete && preview.naturalWidth) ctx.drawImage(preview,0,0,224,224);
-  $("manual-empty").hidden = Boolean(box && box[2]-box[0]>=4 && box[3]-box[1]>=4);
+  $("manual-empty").hidden = validManualBox();
   if (!box) return;
   ctx.strokeStyle="#ffdb72"; ctx.fillStyle="#ffdb7233"; ctx.lineWidth=2;
   ctx.fillRect(box[0],box[1],box[2]-box[0],box[3]-box[1]);
@@ -98,6 +100,7 @@ function setPreview(data) {
   $("cnn-cam-base").src = data;
   visual.original = {image:data};
   $("open-viewer").disabled = false;
+  $("manual").disabled = false;
   resetExplanation();
 }
 function showPredictions(data) {
@@ -178,7 +181,7 @@ canvas.addEventListener("pointerdown", e => {
   const mode = $("prompt-mode").value;
   if (mode !== "box") {
     const [x,y] = locationOnImage(e);
-    if (!box || $("manual").disabled) {
+    if (!validManualBox() || $("manual").disabled) {
       status("manual","Önce bir kutu çizin.");
       return;
     }
@@ -198,7 +201,7 @@ canvas.addEventListener("pointerdown", e => {
   }
   prompts = [];
   canvas.setPointerCapture(e.pointerId);
-  anchor = locationOnImage(e); box = null; $("manual").disabled=true; paint();
+  anchor = locationOnImage(e); box = [...anchor,...anchor]; paint();
 });
 canvas.addEventListener("pointermove", e => {
   if (!anchor || !e.isPrimary) return;
@@ -209,20 +212,23 @@ function finishBox(e) {
   if (!e.isPrimary) return;
   if (!anchor) return;
   anchor = null;
-  $("manual").disabled = !box || box[2]-box[0]<4 || box[3]-box[1]<4;
-  status("manual",$("manual").disabled ? "Kutu geçerli değil." : "Kutuyla maskeyi üretmeye hazır.");
+  status("manual",validManualBox() ? "Kutuyla maskeyi üretmeye hazır." : "Kutu geçerli değil.");
 }
 $("clear-points").addEventListener("click", () => {
   prompts = []; paint();
 });
 $("clear-box").addEventListener("click", () => {
   if ($("manual").dataset.busy) return;
-  box = null; prompts = []; $("manual").disabled = true; paint();
+  box = null; prompts = [];
+  delete visual.manual;
+  $("manual-image").classList.remove("ready");
+  $("manual-box").hidden = true;
+  paint();
   status("manual","Yeni kutu çizebilirsiniz.");
 });
 canvas.addEventListener("keydown", event => {
   const direction = {ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[event.key];
-  if (!direction || !box || $("manual").disabled) return;
+  if (!direction || !validManualBox() || $("manual").disabled) return;
   event.preventDefault();
   const [dx,dy] = direction, [x,y,X,Y] = box, step = 3;
   const next = event.shiftKey ? [x,y,X+dx*step,Y+dy*step] :
@@ -240,8 +246,8 @@ canvas.addEventListener("pointercancel",finishBox);
 function camResult(data, stage) {
   const imageId = Number(stage) === 4 ? "cam4-image" : "cam-image";
   $(imageId).src = data.gradcam_layer || data.gradcam || data.overlay;
-  const note =  "Grad-CAM · " + translatedText("Aşama") + " " + stage + " · " + translatedText(labels[data.classification]) + " · " + (data.gradcam_device || data.device);
-  visual[Number(stage) === 4 ? "gradcam4" : "gradcam"] = {image:data.gradcam || data.overlay,layer:data.gradcam_layer,note};
+  const note = () => "Grad-CAM · " + translatedText("Aşama") + " " + stage + " · " + translatedText(labels[data.classification]) + " · " + (data.gradcam_device || data.device);
+  visual[Number(stage) === 4 ? "gradcam4" : "gradcam"] = {image:data.gradcam || data.overlay,layer:data.gradcam_layer,note:note()};
   status("cam",note);
   updateOpacity();
 }
@@ -266,7 +272,11 @@ $("use-candidate").addEventListener("click", () => {
 });
 $("intensity").addEventListener("click", () => void generate("auto","intensity"));
 async function generate(kind, method = "gradcam", compare = false) {
-  if (!image || (kind === "manual" && !box)) return;
+  if (!image) return;
+  if (kind === "manual" && !validManualBox()) {
+    status("manual",box ? "Kutu geçerli değil." : "Kutu çizip 'Maskeyi üret'e basın.");
+    return;
+  }
   const current = generation, stage = $("stage").value;
   const camTicket = kind !== "manual" ? ++nextCam : nextCam;
   const button = $(kind);
@@ -318,12 +328,12 @@ async function generate(kind, method = "gradcam", compare = false) {
         gradcam_other_stage: "Kutu kaynağı · Grad-CAM aşama " + data.box_stage +
           "."
       }[data.box_source];
-      const note = [source ? data.message || "Aday bölge işaretlendi." : summary, data.box_reason, source, data.box_warning, data.warning].filter(Boolean).map(translatedText).join(" ");
+      const note = () => [source ? data.message || "Aday bölge işaretlendi." : summary, data.box_reason, source, data.box_warning, data.warning].filter(Boolean).map(translatedText).join(" ");
       if (kind === "auto" && data.box) {
         candidateBox = data.box;
         $("use-candidate").hidden = false;
       }
-      visual[kind] = {note,image:data.overlay,box:data.box};
+      visual[kind] = {note:note(),image:data.overlay,box:data.box};
       if (data.box) {
         const bounds = $(kind+"-box");
         const [x,y,X,Y] = data.box;
@@ -498,7 +508,7 @@ function renderPerformance() {
     const active = health.models.find(model=>model.name===m.name)?.checkpoint;
     element("p",active === m.checkpoint ? "Canlı analizde seçili" : "Kayıtlı deney",
       card,"muted");
-    element("p",m.parameters.toLocaleString("tr-TR") + " parametre · " +
+    element("p",m.parameters.toLocaleString(document.documentElement.lang) + " " + translatedText("parametre") + " · " +
       (m.checkpoint_bytes/1048576).toFixed(1) + " MiB checkpoint",card,"muted");
     const macro=metric["macro avg"];
     for (const [name,value] of [["Doğruluk",metric.accuracy],["Ortalama kesinlik",macro.precision],
@@ -516,7 +526,7 @@ function renderPerformance() {
     const total=tumorRows.reduce((sum,row)=>sum+row.reduce((a,b)=>a+b,0),0);
     const miss=element("div",null,card,"panel missed-tumor");
     element("h4","Tümör olup ‘tümör yok’ denen oran",miss);
-    element("strong",`${missed}/${total} · ${pct(missed/total,{digits:1,minimum:1})}`,miss);
+    element("strong",`${missed.toLocaleString(document.documentElement.lang)}/${total.toLocaleString(document.documentElement.lang)} · ${pct(missed/total)}`,miss);
     element("p","Matristen türetilmiştir; aynı 1.579 görüntülük test kümesi; hasta düzeyinde bağımsızlık doğrulanmamıştır.",miss,"muted");
     element("p","Karışıklık matrisi · Satır gerçek sınıf / sütun tahmin",card);
     table(card,["Sınıf",...data.classes.map(key=>labels[key])],m.matrix.map((row,i)=>[labels[data.classes[i]],...row]),true);
