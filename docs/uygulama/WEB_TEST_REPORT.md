@@ -4,12 +4,11 @@
 
 ## Aşama 1 · MR yükleme ve model karşılaştırması
 
-Yerel HTTP üzerinden ana sayfa ve JavaScript yüklendi. `GET /health` üç modelin yüklendiğini bildirdi. `POST /predict` isteğine `Testing/meningioma/Te-me_263.jpg` yüklenince CNN, ViT ve Swin-Tiny aynı sınıf sırasıyla dört gerçek olasılık döndürdü. Her modelin olasılıklarının toplamı testte 1 olarak doğrulandı. Üçünün de en yüksek olasılığı `meningioma` idi.
+Yerel HTTP üzerinden ana sayfa ve JavaScript yüklendi. `GET /health` iki modelin yüklendiğini bildirdi. `POST /predict` isteğine `Testing/meningioma/Te-me_263.jpg` yüklenince CNN ve Swin-Tiny aynı sınıf sırasıyla dört gerçek olasılık döndürdü. Her modelin olasılıklarının toplamı testte 1 olarak doğrulandı. İkisinin de en yüksek olasılığı `meningioma` idi.
 
 | Model | CUDA meningioma | CPU meningioma |
 | --- | ---: | ---: |
 | CNN | %84,45063 | %84,45224 |
-| ViT | %98,98254 | %98,98257 |
 | Swin-Tiny | %99,99818 | %99,99818 |
 
 ## Aşama 2 · Grad-CAM, SAM ve hata durumları

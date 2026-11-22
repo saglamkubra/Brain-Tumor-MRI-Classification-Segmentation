@@ -8,7 +8,7 @@ Görevde adı geçen “Kapsamlı Proje Devir Dokümanı” ve “Profesyonel We
 
 | Aşama | Uygulanan ve doğrulanan |
 |---|---|
-| Model doğruluğu | CNN mimarisi notebook'un 22.9.1 hücresindeki `architecture_code` içeriğinden alındı. Sekiz evrişim ve 3.337.764 parametre, tek kanallı 224 × 224 giriş ve gerçek ön işleme değerleri doğrulandı. Yerel CNN checkpoint'i SHA-256 eşleşmesi, `weights_only=True` ve `strict=True` ile yüklendi. Sınıf sırası glioma, meningioma, notumor, pituitary. SAM ViT-B çalışıyor. Bağımsız ViT sınıflandırıcısı etkin değil. |
+| Model doğruluğu | CNN mimarisi notebook'un 22.9.1 hücresindeki `architecture_code` içeriğinden alındı. Sekiz evrişim ve 3.337.764 parametre, tek kanallı 224 × 224 giriş ve gerçek ön işleme değerleri doğrulandı. Yerel CNN checkpoint'i SHA-256 eşleşmesi, `weights_only=True` ve `strict=True` ile yüklendi. Sınıf sırası glioma, meningioma, notumor, pituitary. SAM ViT-B çalışıyor. |
 | Grad-CAM | CNN hedefi `features.3.block.3`. Swin Aşama 3 hedefi `model.layers[2]`, Aşama 4 hedefi `model.layers[3].blocks[-1].norm1`. Üç regresyon görüntüsünde CNN ve Swin'in hedef sınıfları kendi tahminleriyle eşleşti. |
 | SAM ve hizalama | Önceki koordinat iyileştirmesi, doğal en-boy oranı ve açık kullanıcı tercihiyle alternatif aşama korundu. Aynı altı MR karşılaştırması yeni sürümle tekrar çalıştırıldı. Sınıflar, kutular, maske piksel sayıları ve checkpoint hash'leri önceki denetimle eşleşti. Otomatik ve manuel SAM gerçek modelle geçti. |
 | Arayüz | Chrome'da 1440 ve 390 piksel, tek/çift aşama, CNN Grad-CAM, maskeler, saydamlık, klavye ile kutu düzenleme, galeri, tema, İngilizce gezinme ve oturum geçmişi doğrulandı. Görüntüleyicide yakınlaştırma, sıfırlama, klavyeyle kaydırma ve tarayıcı içi tam alan doğrulandı. |

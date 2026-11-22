@@ -16,17 +16,6 @@
         "device": "cuda"
       },
       {
-        "model": "ViT",
-        "class": "meningioma",
-        "probabilities": {
-          "glioma": 0.006642116233706474,
-          "meningioma": 0.989825427532196,
-          "notumor": 4.2788884456967935e-05,
-          "pituitary": 0.0034897602163255215
-        },
-        "device": "cuda"
-      },
-      {
         "model": "Swin-Tiny",
         "class": "meningioma",
         "probabilities": {
@@ -94,17 +83,6 @@
         "device": "cuda"
       },
       {
-        "model": "ViT",
-        "class": "pituitary",
-        "probabilities": {
-          "glioma": 0.016224363818764687,
-          "meningioma": 0.12119467556476593,
-          "notumor": 0.00016373093239963055,
-          "pituitary": 0.8624172210693359
-        },
-        "device": "cuda"
-      },
-      {
         "model": "Swin-Tiny",
         "class": "pituitary",
         "probabilities": {
@@ -158,17 +136,6 @@
         "device": "cuda"
       },
       {
-        "model": "ViT",
-        "class": "notumor",
-        "probabilities": {
-          "glioma": 1.4014965927344747e-05,
-          "meningioma": 0.0001288727216888219,
-          "notumor": 0.9985150694847107,
-          "pituitary": 0.0013420460745692253
-        },
-        "device": "cuda"
-      },
-      {
         "model": "Swin-Tiny",
         "class": "notumor",
         "probabilities": {
@@ -208,17 +175,6 @@
           "meningioma": 0.3684694170951843,
           "notumor": 0.4030974507331848,
           "pituitary": 0.22602561116218567
-        },
-        "device": "cuda"
-      },
-      {
-        "model": "ViT",
-        "class": "glioma",
-        "probabilities": {
-          "glioma": 0.6251063346862793,
-          "meningioma": 0.05775018781423569,
-          "notumor": 0.2660834789276123,
-          "pituitary": 0.051059991121292114
         },
         "device": "cuda"
       },

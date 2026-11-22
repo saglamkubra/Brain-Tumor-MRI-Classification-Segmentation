@@ -7,7 +7,7 @@
 ## Veri bölmeleri nasıl oluşturuldu?
 
 - **Swin**, sıfır tabanlı hücre 6’da `Training/` klasöründeki görüntüleri sınıf sırasıyla, her sınıfta dosya adına göre sıralıyor. `train_test_split(test_size=0.20, random_state=42, stratify=df["sinif"])` ile görüntü düzeyinde ayırıyor. Hücre 7, listeleri `train.csv` ve `val.csv` olarak yazıyor, `Testing/` altındaki bütün uygun görüntüleri `test.csv` olarak kaydediyor. Hücreler 10 ve 12 bu CSV’leri tekrar okuyor. [Swin notebook](../../notebooks/Swin_Transformer_SAM.ipynb)
-- **CNN ve ViT**, aynı Google Drive proje klasöründeki `veri_bolunmesi/train.csv`, `val.csv` ve `test.csv` dosyalarını okuyor. Her ikisinin kayıtlı çıktısındaki bölme boyutları 4.480/1.120/1.600. CNN’in yazdırdığı ilk eğitim, doğrulama ve test dosyaları yeniden oluşturulan listelerin ilk dosyalarıyla eşleşti. Ortak CSV adları, boyutlar ve örnek yollar ortak bölme kullanıldığına işaret ediyor. [CNN notebook](../../notebooks/CNN.ipynb) · [ViT notebook](../../notebooks/ViT.ipynb)
+- CNN notebook’u Google Drive’daki `veri_bolunmesi/train.csv`, `val.csv` ve `test.csv` listelerini okuyor. Kaydedilen boyutlar 4.480/1.120/1.600. [CNN notebook](../../notebooks/CNN.ipynb)
 - Özgün CSV’ler çalışma alanında, üst klasörün aranabilen dosyalarında veya yereldeki GitHub geçmişi kopyasında bulunmadı. Arşivde yalnızca görüntü dosyaları var. Dolayısıyla üç notebook’un **özgün satır üyeliği** tek tek karşılaştırılamadı. Aşağıdaki eğitim/doğrulama ayrımı Swin kodunun yerel arşiv üzerinde yeniden üretilmiş halidir. Test ile birleşik `Training/` arasındaki sonuç bu yeniden bölme varsayımından bağımsızdır.
 
 | Bölme | Toplam | Sınıf başına |
@@ -58,22 +58,22 @@ Görsel karşılaştırma dosyası yerel çalışma arşivinde. [Kesin ve aday �
 ## Hasta düzeyi, dönüşümler ve model seçimi
 
 - **Hasta düzeyinde bağımsızlık doğrulanamadı.** Yerel arşiv 7.200 JPG görüntüden oluşuyor. Hasta veya çalışma kimliğine bağlanabilen bir manifest yok. JPEG’lerin 22’sinde EXIF, 5’inde yorum alanı var. İncelenen meta veri alanları bölme için kullanılabilir güvenilir bir hasta/çalışma anahtarı sağlamadı. Kimlik veya kişisel meta veri değerleri denetim çıktılarına aktarılmadı. Görüntü düzeyindeki bölme kodunda hasta gruplaması bulunmuyor. Aynı hastanın farklı kesitleri kümeler arasında dağılmış olabilir. Veri kümesinin birden çok koleksiyondan derlendiği, küratörün yayımladığı açıklamada belirtiliyor. [Veri kümesi açıklaması](https://www.kaggle.com/dsv/2645886)
-- **Notebook artırmaları yalnızca eğitim hattına bağlı.** CNN üç bölmede aynı deterministik gri tonlama, boyutlandırma ve sabit 0,5 normalizasyonu kullanıyor. ViT yatay çevirme ve ±10° döndürmeyi yalnızca eğitimde uyguluyor. Swin ±10° döndürmeyi yalnızca eğitimde uyguluyor. ViT ve Swin’in doğrulama/test hattı sabit 224×224 boyutlandırma ve sabit ImageNet normalizasyonu kullanıyor. Bu hatlarda testten ortalama, standart sapma veya başka dizi düzeyinde dönüşüm parametresi hesaplandığı görülmedi.
+- CNN sabit gri tonlama, boyutlandırma ve 0,5 normalizasyonu kullanıyor. Swin döndürmeyi yalnız eğitimde, sabit ImageNet normalizasyonunu doğrulama ve testte uyguluyor.
 - **Arşivde hazır varyant riski ayrıca var.** `aug` geçen dosya adları eğitimde 80, doğrulamada 20 ve testte 103 kez görülüyor. Hepsi meningioma. Dosya adı hangi dönüşümün uygulandığını kanıtlamıyor. Notebook içindeki rastgele artırmaların doğru ayrılmış olması, arşivle gelen olası varyantların kümeler arası dağılımını engellemiyor.
-- **Sınıflandırıcı checkpoint seçimi doğrulama ile yapılıyor.** CNN 20 ve ViT 10 epoch boyunca en düşük validation loss’u, Swin 3 epoch boyunca en yüksek validation accuracy’yi kaydediyor. Kayıtlı döngüler sabit epoch sayısıyla çalışıyor ve durdurma koşulu içermiyor. Test loader checkpoint seçim ölçütüne veya eğitim döngüsüne bağlı görünmüyor. Notebook dışındaki önceki denemelerin ya da kararların geçmişi doğrulanamadı.
+- **Sınıflandırıcı checkpoint seçimi doğrulama ile yapılıyor.** CNN 20 epoch boyunca en düşük validation loss’u, Swin 3 epoch boyunca en yüksek validation accuracy’yi kaydediyor. Kayıtlı döngüler sabit epoch sayısıyla çalışıyor ve durdurma koşulu içermiyor. Test loader checkpoint seçim ölçütüne veya eğitim döngüsüne bağlı görünmüyor. Notebook dışındaki önceki denemelerin ya da kararların geçmişi doğrulanamadı.
 - **Grad-CAM/SAM akışında testten örnek bazında ayar geliştirme var.** Swin notebook’u etiketli test örneklerinde Grad-CAM hedef katmanlarını ve otomatik kutu eşiklerini deniyor, ardından aynı test listesinde örnek çıktılar üretiyor. Bu, sınıflandırıcı checkpoint seçimiyle ayrı bir bulgu. Bu örnekler yöntemin geliştirilmiş örnek çıktıları olarak yorumlanmalı.
 
 ## Performansa olası etkisi
 
-Önceki 4.800 tahmin satırı kullanılarak alt kümeler yeniden hesaplandı. Yeni çıkarım çalıştırılmadı. Önceki performans raporunun benzerlik taraması dHash kullanıyordu. Bu tabloda yeni pHash taraması kullanıldığı için son alt kümenin büyüklüğü farklı.
+CNN ve Swin-Tiny için saklanan 3.200 tahmin satırı kullanılarak alt kümeler yeniden hesaplandı. Yeni çıkarım çalıştırılmadı. Önceki performans raporunun benzerlik taraması dHash kullanıyordu. Bu tabloda yeni pHash taraması kullanıldığı için son alt kümenin büyüklüğü farklı.
 
-| Test alt kümesi | Görüntü | CNN accuracy / macro F1 | ViT accuracy / macro F1 | Swin-Tiny accuracy / macro F1 |
-| --- | ---: | ---: | ---: | ---: |
-| Tüm test | 1.600 | %76,75 / %75,88 | %90,25 / %90,05 | %93,25 / %93,19 |
-| Eğitim/doğrulamada piksel eşi bulunanları hariç tut | 1.486 | %81,36 / %79,99 | %90,44 / %89,88 | %93,00 / %92,73 |
-| Eğitim/doğrulama ile pHash adaylarını da hariç tut | 1.163 | %76,61 / %73,15 | %87,96 / %87,98 | %91,23 / %90,25 |
+| Test alt kümesi | Görüntü | CNN accuracy / macro F1 | Swin-Tiny accuracy / macro F1 |
+| --- | ---: | ---: | ---: |
+| Tüm test | 1.600 | %76,75 / %75,88 | %93,25 / %93,19 |
+| Eğitim/doğrulamada piksel eşi bulunanları hariç tut | 1.486 | %81,36 / %79,99 | %93,00 / %92,73 |
+| Eğitim/doğrulama ile pHash adaylarını da hariç tut | 1.163 | %76,61 / %73,15 | %91,23 / %90,25 |
 
-Model sıralaması iki alt kümede de korundu. Piksel-eş kayıtları çıkarmak Swin-Tiny accuracy’sini 0,25 puan düşürürken CNN accuracy’sini artırdı. Sınıf bileşimi de değişti. Son alt kümede 400 notumor görüntüsünden 84’ü kaldı. Bu farklar veri sızıntısının nedensel etkisini ölçmez. Aynı veya ilişkili kesitlerin eğitime girmiş olması değerlendirmeyi gereğinden iyimser yapabilir, test içi tekrarlar da bazı kesitlere fazladan ağırlık verir. Ayrıca etiket uyuşmazlığı, yüksek skorlu bazı yanlışların yorumunu değiştiriyor. `Te-gl_68.jpg` Swin-Tiny’nin, `Te-gl_160.jpg` ise ViT’nin önceki testteki en yüksek skorlu yanlışıydı. [Önceki değerlendirme](../deneyler/MODEL_PERFORMANCE_ANALYSIS.md)
+Model sıralaması iki alt kümede de korundu. Piksel-eş kayıtları çıkarmak Swin-Tiny accuracy’sini 0,25 puan düşürürken CNN accuracy’sini artırdı. Sınıf bileşimi de değişti. Son alt kümede 400 notumor görüntüsünden 84’ü kaldı. Bu farklar veri sızıntısının nedensel etkisini ölçmez. Aynı veya ilişkili kesitlerin eğitime girmiş olması değerlendirmeyi gereğinden iyimser yapabilir, test içi tekrarlar da bazı kesitlere fazladan ağırlık verir. Ayrıca etiket uyuşmazlığı, yüksek skorlu bazı yanlışların yorumunu değiştiriyor. `Te-gl_68.jpg` Swin-Tiny’nin önceki testteki en yüksek skorlu yanlışıydı. [Önceki değerlendirme](../deneyler/MODEL_PERFORMANCE_ANALYSIS.md)
 
 ## Önerilen düzeltmeler
 

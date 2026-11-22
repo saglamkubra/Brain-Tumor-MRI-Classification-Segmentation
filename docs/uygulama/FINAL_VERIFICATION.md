@@ -52,7 +52,6 @@ Kayıtlı Te-me_263 deneyinde yerel ince ayar otomatik maskesi 4.396, manuel mas
 
 ## 4. Koruma ve çalıştırma
 
-- **Geçti:** `models/vit_best.pth` yerinde, 343.267.949 bayt. SHA-256 başlangıç yedeğiyle eşleşti.
 - **Geçti:** Geçici Git deposunda `git check-ignore -v` ile `.venv`, `backups`, `.backups`, `yedek`, `models`, `.pth`, MRI ZIP'i ve açılmış `Training`, `Testing`, `dataset` yolları doğrulandı.
 - **Geçti:** Dört birim testi (`python -m unittest discover -s tests -p 'test*.py'`), JS sözdizimi ve Python derleme kontrolü.
 - GitHub'a push yapılmadı.

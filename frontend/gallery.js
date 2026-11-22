@@ -73,7 +73,7 @@
       segmentPanel('Manuel SAM', example.manual, 'Bu örnek için kayıtlı manuel kutu bulunmuyor.'));
     display.replaceChildren(head, predictions);
     if (example.label === 'glioma') {
-      display.append(make('p', 'Bu Glioma örneğinde ViT doğru tahmin verdi. CNN ve Swin-Tiny test etiketinden farklı sınıflar seçti. Karşılaştırma yalnızca bu tek görüntüye aittir.', 'gallery-note'));
+      display.append(make('p', 'Bu glioma örneğinde CNN ve Swin-Tiny test etiketinden farklı sınıflar seçti. Karşılaştırma yalnızca bu tek görüntüye aittir.', 'gallery-note'));
     }
     display.append(visuals, make('p', 'SAM maskeleri uzman tarafından doğrulanmış tümör sınırları değildir.', 'gallery-foot'));
   }
