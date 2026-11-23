@@ -80,7 +80,10 @@ def box_diagnostic(cam_map, foreground):
     heatmap = cv2.GaussianBlur(heatmap, (7, 7), 0)
     activations = heatmap[foreground]
     peak = float(activations.max())
-    if peak <= 0 or peak - float(np.median(activations)) < 0.15:
+    contrast = peak - float(np.median(activations))
+    # Keep the original gate for strong maps; accept a weaker peak only
+    # when it still stands clearly above the foreground baseline.
+    if contrast < 0.15 and (peak < 0.025 or contrast < 0.35 * peak):
         return None, 'aktivasyonlar birbirinden yeterince ayrışmadı'
     threshold = max(float(np.percentile(activations, 90)), 0.60 * peak)
     binary = (foreground & (heatmap >= threshold)).astype(np.uint8)
@@ -183,7 +186,7 @@ def explain(models, image, rgb, stage=3, name="Swin-Tiny"):
         with torch.no_grad():
             logits = model(device_input)
             if not torch.isfinite(logits).all():
-                raise ValueError("Swin-Tiny geçerli sınıf skorları üretemedi.")
+                raise ValueError(f"{name} geçerli sınıf skorları üretemedi.")
             index = int(logits.argmax(dim=1).item())
         if name == "CNN":
             target_layer = model.features[3].block[3]
@@ -210,31 +213,37 @@ def sam_image(image):
     return PreviewGeometry(*image.size).project(np.asarray(image.convert("RGB")), cv2.INTER_LINEAR)
 
 
-def segment(models, image, manual_box, method='gradcam', stage=3, prompts=(), allow_fallback=False):
+def segment(models, image, manual_box, method='gradcam', stage=3, prompts=(), allow_fallback=False, model='swin'):
     geometry = PreviewGeometry(*image.size)
     native_rgb = np.asarray(image.convert("RGB"))
     rgb = geometry.project(native_rgb, cv2.INTER_LINEAR)
     response = {"status": "hazır", "image_size": [SIZE, SIZE]}
     foreground = foreground_region(rgb) if manual_box is None else None
     if manual_box is None:
-        label, heatmap, device, overlay, layer = explain(models, image, rgb, stage)
+        cnn_source = method == "gradcam" and model == "cnn"
+        classifier = "CNN" if cnn_source else "Swin-Tiny"
+        label, heatmap, device, overlay, layer = explain(models, image, rgb, stage, classifier)
         response.update(classification=label, gradcam=overlay, gradcam_layer=layer,
-                        gradcam_device=device, stage=stage, method=method)
+                        gradcam_device=device, stage=None if cnn_source else stage, method=method,
+                        model=classifier)
         if method == "intensity" and label == "notumor":
             response["warning"] = "Sınıflandırıcı tümör yok dedi. Görüntü işleme kutusu olası bir parlak bölgedir; tanı değildir."
         if label == "notumor" and method == "gradcam":
-            return dict(response, status="atlandı", message="Swin-Tiny tümör yok sınıfını seçti. Otomatik SAM atlandı.")
+            return dict(response, status="atlandı", message=f"{classifier} tümör yok sınıfını seçti. Otomatik SAM atlandı.")
         if method == "intensity":
             box = intensity_candidate(rgb)
             if box is not None:
                 response["box_source"] = "intensity"
         else:
             box, reason = box_diagnostic(heatmap, foreground)
-            if box is not None:
+            if cnn_source:
+                if box is not None:
+                    response["box_source"] = "gradcam_cnn"
+            elif box is not None:
                 response.update(box_source="gradcam_selected", box_stage=stage, box_stages=[stage])
             else:
                 response["box_reason"] = f"Aşama {stage}: {reason}."
-        if box is None and method == "gradcam" and allow_fallback:
+        if box is None and method == "gradcam" and allow_fallback and not cnn_source:
             other_stage = 4 if stage == 3 else 3
             other_label, other_cam, _, _, _ = explain(models, image, rgb, other_stage)
             if other_label == label:
@@ -243,6 +252,9 @@ def segment(models, image, manual_box, method='gradcam', stage=3, prompts=(), al
                     response.update(box_source="gradcam_agreement", box_stages=[3, 4])
                 if box is None:
                     response["box_warning"] = "İki aşama aynı bölgede yeterince güçlü ortak odak göstermedi."
+        if box is None and cnn_source:
+            return dict(response, status="kutu_yok",
+                        message="CNN Grad-CAM haritasından uygun kutu çıkmadı. Swin-Tiny seçebilir veya manuel kutu çizebilirsiniz.")
         if box is None:
             return dict(response, status="kutu_yok", message="Seçilen aşamadan uygun aday kutu oluşturulamadı. Alternatif aşamayı deneyebilir veya manuel kutu çizebilirsiniz.")
     else:

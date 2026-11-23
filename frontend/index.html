@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NEURO AI LAB | Beyin MR Analizi</title>
-<link rel="stylesheet" href="/assets/style.css"><script defer src="/assets/app.js"></script><script defer src="/assets/explanation.js"></script>
+<link rel="stylesheet" href="/assets/style.css?v=mr-viewer-2"><script defer src="/assets/app.js"></script><script defer src="/assets/explanation.js?v=mr-viewer-2"></script>
 </head>
 <body>
 <aside class="sidebar">
@@ -33,7 +33,7 @@
 </section>
 <section id="gorsel"><h2 data-i18n>Grad-CAM ve SAM</h2>
 <div class="panel controls"><label><span data-i18n>Gösterilen Grad-CAM aşaması</span><select id="stage"><option value="3" data-i18n>Aşama 3</option><option value="4" data-i18n>Aşama 4</option></select></label>
-<button id="cam" aria-pressed="false" disabled>Aşama 3 ve 4 karşılaştırması</button><button id="cnn-cam" data-i18n disabled>CNN Grad-CAM göster</button><button id="auto" disabled data-i18n>Otomatik SAM</button>
+<button id="cam" aria-pressed="false" disabled>Aşama 3 ve 4 karşılaştırması</button><button id="cnn-cam" data-i18n disabled>CNN Grad-CAM göster</button><label><span data-i18n>Otomatik kutu kaynağı</span><select id="auto-model" disabled><option value="swin">Swin-Tiny</option><option value="cnn">CNN</option></select></label><button id="auto" disabled data-i18n>Otomatik SAM</button>
 <label class="fallback-option"><input type="checkbox" id="allow-fallback"><span data-i18n> Kutu bulunamazsa diğer aşamayı dene</span></label>
 <button id="intensity" disabled data-i18n>Kontrastla aday ara</button>
 <label>Grad-CAM görünürlüğü <output id="cam-level" for="cam-opacity">%75</output><input id="cam-opacity" type="range" min="0" max="100" value="75" disabled></label>

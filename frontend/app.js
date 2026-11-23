@@ -87,7 +87,7 @@ function clear() {
     $(key+"-image").classList.remove("ready"); $(key+"-box").hidden=true;
     $(key+"-image").getContext("2d").clearRect(0,0,224,224);
   });
-  ["cam","auto","manual","pdf","intensity"].forEach(id => { $(id).disabled=true; delete $(id).dataset.busy; });
+  ["cam","auto","auto-model","manual","pdf","intensity"].forEach(id => { $(id).disabled=true; delete $(id).dataset.busy; });
   updateOpacity();
   paint();
   resetExplanation();
@@ -157,8 +157,14 @@ async function analyze(file) {
     const swin = data.predictions.find(p => p.model === "Swin-Tiny");
     $("pdf").disabled=false;
     $("intensity").disabled = !swin;
-    if (swin) {
-      $("cam").disabled = $("auto").disabled = false;
+    const cnn = data.predictions.find(p => p.model === "CNN");
+    $("auto-model").options[0].disabled = !swin;
+    $("auto-model").options[1].disabled = !cnn;
+    if ($("auto-model").selectedOptions[0]?.disabled) $("auto-model").value = swin ? "swin" : "cnn";
+    $("auto-model").disabled = !(swin && cnn);
+    $("cam").disabled = !swin;
+    if (swin || cnn) {
+      $("auto").disabled = false;
       void generate("auto");
     }
     $("topic").value = (swin || data.predictions[0]).class;
@@ -279,6 +285,8 @@ async function generate(kind, method = "gradcam", compare = false) {
   }
   const current = generation, stage = $("stage").value;
   const camTicket = kind !== "manual" ? ++nextCam : nextCam;
+  const autoModel = $("auto-model").value;
+  if (kind !== "manual") $("auto-model").disabled = true;
   const button = $(kind);
   button.disabled=true;
   if (kind !== "manual") $("stage").disabled = true;
@@ -298,7 +306,10 @@ async function generate(kind, method = "gradcam", compare = false) {
     updateOpacity();
   }
   const params = new URLSearchParams({mode:kind,stage,method});
-  if (kind === "auto") params.set("allow_fallback",String($("allow-fallback").checked));
+  if (kind === "auto") {
+    params.set("allow_fallback",String($("allow-fallback").checked));
+    if (method === "gradcam") params.set("model",autoModel);
+  }
   if (kind === "manual") {
     params.set("box",box.join(","));
     if (prompts.length) params.set("points",prompts.map(point => point.join(",")).join(";"));
@@ -317,12 +328,16 @@ async function generate(kind, method = "gradcam", compare = false) {
     }
     const data = await postImage(endpoint,image);
     if (current !== generation) return;
-    if (camTicket === nextCam && data.gradcam) camResult(data,stage);
+    if (camTicket === nextCam && data.gradcam) {
+      if (data.model === "CNN") showCnnCam(data.gradcam_layer,data.gradcam,data.classification);
+      else camResult(data,stage);
+    }
     if (kind !== "cam") {
       const summary = data.message || (method === "intensity" ?
         "Kontrastla bulunan aday bölge işaretlendi. Bu yöntem parlak dokuları da seçebilir." :
         "Aday bölge işaretlendi." + (kind === "auto" ? " Grad-CAM aşama " + stage + " kullanıldı." : ""));
       const source = {
+        gradcam_cnn: "Kutu kaynağı · CNN Grad-CAM.",
         gradcam_selected: "Kutu kaynağı · Grad-CAM aşama " + data.box_stage + ".",
         gradcam_agreement: "Kutu kaynağı · Grad-CAM aşama 3 ve 4’ün ortak odağı.",
         gradcam_other_stage: "Kutu kaynağı · Grad-CAM aşama " + data.box_stage +
@@ -369,8 +384,10 @@ async function generate(kind, method = "gradcam", compare = false) {
       if (kind !== "manual") $("stage").disabled = false;
       if (kind !== "manual") {
         $("auto").disabled = false;
-        $("intensity").disabled = false;
-        $("cam").disabled = false;
+        const hasSwin = analysis.predictions.some(item => item.model === "Swin-Tiny");
+        $("intensity").disabled = !hasSwin;
+        $("cam").disabled = !hasSwin;
+        $("auto-model").disabled = analysis.predictions.length < 2;
       }
     }
   }
@@ -385,9 +402,12 @@ $("cam").addEventListener("click", () => {
   }
   void generate("cam","gradcam",true);
 });
+$("auto-model").addEventListener("change", () => {
+  if (image && !$("auto").disabled) void generate("auto");
+});
 $("stage").addEventListener("change", () => {
   showCamStages();
-  if (image && !$("auto").disabled) void generate("auto");
+  if (image && !$("auto").disabled && $("auto-model").value === "swin") void generate("auto");
 });
 function updateOpacity(){
   const camIds = ["cam-image","cam4-image"];
@@ -559,6 +579,13 @@ $("open-viewer").addEventListener("click", () => {
     ["CNN Grad-CAM",visual.cnn_cam], ["Otomatik SAM",visual.auto], ["Manuel SAM",visual.manual]].filter(([,entry])=>entry?.image));
 });
 
+function showCnnCam(layer, overlay, classification) {
+  $("cnn-cam-image").src = layer;
+  $("cnn-cam-panel").hidden = false;
+  visual.cnn_cam = {image:overlay,layer,note:"CNN · " + labels[classification]};
+  status("cam", () => "CNN · " + translatedText(labels[classification]) + " · features.3.block.3");
+  updateOpacity();
+}
 $("cnn-cam").addEventListener("click", async () => {
   if (!image) return;
   const current = generation;
@@ -567,11 +594,7 @@ $("cnn-cam").addEventListener("click", async () => {
   try {
     const map = await postImage("/explain?model=cnn", image);
     if (current !== generation) return;
-    $("cnn-cam-image").src = map.gradcam_layer;
-    $("cnn-cam-panel").hidden = false;
-    visual.cnn_cam = {image:map.overlay,layer:map.gradcam_layer,note:"CNN · " + labels[map.classification]};
-    status("cam",visual.cnn_cam.note + " · features.3.block.3");
-    updateOpacity();
+    showCnnCam(map.gradcam_layer,map.overlay,map.classification);
   } catch (error) {
     if (current === generation) status("cam",error.message);
   } finally {

@@ -33,6 +33,16 @@ class CandidateTests(unittest.TestCase):
         heatmap[145:175, 140:170] = 1
         self.assertIsNone(automatic_box(heatmap, foreground))
 
+    def test_weak_localized_peak_can_form_box_but_flat_maps_cannot(self):
+        foreground = np.ones((SIZE, SIZE), dtype=bool)
+        heatmap = np.full((SIZE, SIZE), 0.02, dtype=np.float32)
+        heatmap[70:94, 128:153] = 0.09
+        self.assertIsNotNone(automatic_box(heatmap, foreground))
+        self.assertIsNone(automatic_box(heatmap * 0.01, foreground))
+        heatmap.fill(0.085)
+        heatmap[70:94, 128:153] = 0.09
+        self.assertIsNone(automatic_box(heatmap, foreground))
+
     def test_shared_focus_requires_overlap_between_stages(self):
         foreground = np.ones((SIZE, SIZE), dtype=bool)
         first = np.zeros((SIZE, SIZE), dtype=np.float32)

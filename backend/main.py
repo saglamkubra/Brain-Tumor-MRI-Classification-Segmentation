@@ -117,7 +117,7 @@ async def predict(request: Request):
 @app.post("/segment")
 async def segment_image(request: Request, mode: str = "auto", box: str | None = None,
                         method: str = "gradcam", stage: int = 3, points: str = Query("", max_length=250),
-                        allow_fallback: bool = False):
+                        allow_fallback: bool = False, model: str = Query("swin", pattern="^(swin|cnn)$")):
     if mode not in {"auto", "manual"} or (mode == "auto" and (box is not None or points)):
         raise HTTPException(422, "Segmentasyon yöntemi auto veya manual olmalı.")
     if method not in {"gradcam", "intensity"} or stage not in {3, 4}:
@@ -147,7 +147,7 @@ async def segment_image(request: Request, mode: str = "auto", box: str | None = 
             raise HTTPException(422, "Noktaları görüntü üzerinde seçin. Dahil etme noktaları kutu içinde olmalı.") from None
     image = await uploaded_image(request)
     try:
-        result = await run_in_threadpool(segment, request.app.state.models, image, coordinates, method, stage, prompts, allow_fallback)
+        result = await run_in_threadpool(segment, request.app.state.models, image, coordinates, method, stage, prompts, allow_fallback, model)
         for field in ("message", "warning", "box_warning", "box_reason"):
             if field in result:
                 result[field] = message(result[field], request_language(request))

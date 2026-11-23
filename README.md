@@ -387,6 +387,8 @@ print(result)
 
 Arayüz CNN ve Swin tahminlerini, Grad-CAM ve otomatik veya manuel SAM görsellerini, gerçek deney metriklerini ve grafiklerini gösterir. Eşzamanlı görüntüleyici aynı önizleme koordinatlarında katman karşılaştırması yapar. Açıklamayı sına bölümü gerçek model girişlerini ve bölge müdahalelerini gösterir. PubMed’e sınıf ve arama terimi gönderilir. PDF raporu analiz sonuçlarını ve seçilen görselleri içerir.
 
+Otomatik SAM kutusu, **Otomatik kutu kaynağı** menüsünde seçilen Swin-Tiny (varsayılan) veya CNN Grad-CAM haritasından önerilir. Haritadan uygun kutu çıkmazsa manuel kutu kullanılabilir. SAM maskesi aday bölgeyi gösterir.
+
 Modelin gördüğü bölümünü açınca CNN ve Swin giriş görselleri otomatik yüklenir. Müdahale deneyinde çizilen kutunun rastgele kontrolü aynı sayıda pikseli kutuyla kesişmeden gizler. Kullanılan konum özgün MR piksel koordinatlarıyla gösterilir. Manuel SAM, kutu eksik veya geçersiz olduğunda yönlendirme gösterir. Arayüz ve PDF, Türkçe ve İngilizce sayı biçimlerini kullanır.
 
 | Uç nokta | İşlev |

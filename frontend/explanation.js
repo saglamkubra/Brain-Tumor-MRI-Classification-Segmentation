@@ -48,13 +48,17 @@ function openViewer(images,title = "") {
     viewport.tabIndex = 0;
     viewport.setAttribute("aria-label",translatedText(name || title));
     const content = element("div",null,viewport,"viewer-content");
-    const insertImage = (parent,src,cls="") => {
-      const img = element("img",null,parent,cls);
-      img.src = src;
-      img.alt = "";
-      img.draggable = false;
-      img.onerror = () => status("viewer","Görüntü açılamadı.");
-      return img;
+    const insertImage = (parent, src, cls = "") => {
+      const layer = element("div", null, parent, ("viewer-image " + cls).trim());
+      layer.setAttribute("aria-hidden", "true");
+      const image = new Image();
+      image.onload = () => {
+        if (!cls) layer.style.aspectRatio = image.naturalWidth + " / " + image.naturalHeight;
+        layer.style.backgroundImage = `url(${JSON.stringify(src)})`;
+      };
+      image.onerror = () => status("viewer","Görüntü açılamadı.");
+      image.src = src;
+      return layer;
     };
     if (aligned && result !== visual.original) insertImage(content,visual.original.image);
     const layered = aligned && result !== visual.original;
@@ -154,10 +158,12 @@ panes.addEventListener("keydown",evt=>{
 panes.addEventListener("pointerdown",evt=>{
   const pane=evt.target.closest(".viewer-viewport");
   if (!pane || evt.button!==0) return;
+  evt.preventDefault();
   selectedPane=pane;
   pane.focus({preventScroll:true});
-  if (!evt.target.closest(".viewer-line") && viewerStates.get(pane).zoom<=1) return;
-  drag={x:evt.clientX,y:evt.clientY,split:Boolean(evt.target.closest(".viewer-line"))};
+  const split=Boolean(evt.target.closest(".viewer-line"));
+  if (!split && viewerStates.get(pane).zoom<=1) return;
+  drag={x:evt.clientX,y:evt.clientY,split};
   panes.setPointerCapture(evt.pointerId);
 });
 panes.addEventListener("pointermove",evt=>{
